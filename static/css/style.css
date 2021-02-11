@@ -1,0 +1,27 @@
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-body: black;
+    }
+}
+
+main {
+    margin-top: 100px;
+    margin-bottom: 40px;
+    margin-left: 90px;
+    margin-right: 90px;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+@media only screen and (max-width: 768px) {
+    main {
+        margin-left: 30px;
+        margin-right: 30px;
+    }
+}
+
+p {
+    text-align: justify;
+}
