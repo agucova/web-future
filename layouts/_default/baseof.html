@@ -6,7 +6,8 @@
         {{ block "main" . }}{{ end }}
       </main>
       {{ partial "nav.html" . }}
-      {{ "<!-- This honors DNT and only tracks essentials statistics. Check https://github.com/milesmcc/shynet for details. -->" | safeHtml }}
+      {{ "<!-- This is my humble attempt at analytics. -->" | safeHTML }}
+      {{ "<!-- This honors DNT and only tracks essentials statistics. Check https://github.com/milesmcc/shynet for details. -->" | safeHTML }}
       {{ partial "shynet.html" .}}
   </body>
 </html>
