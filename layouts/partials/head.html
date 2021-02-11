@@ -3,15 +3,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-    {{ $water := "css/water.css" | absURL }}
-    {{ $css := "css/style.css" | absURL }}
-
+    {{ $water := "css/water.css" | absURL -}}
+    {{- $css := "css/style.css" | absURL -}}
 
     <link rel="stylesheet" href="{{$water}}" />
     <link rel="stylesheet" href="{{$css}}" />
 
-
     {{ partial "meta" . }}
-    {{ if .IsHome }}{{ $title := .Site.Title }}{{ end }}
-    <title>{{ .Title }}</title>
+
+    <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
   </head>

@@ -1,5 +1,11 @@
-<meta name="application-name" content="{{ .Title }} | {{ .Site.Title }}" />
-<meta name="description" content="{{ .Params.description }}" />
+<title>Agustín Covarrubias - Student and open sourcerer</title>
+{{ if .IsHome}}
+    <meta name="application-name" content="{{ .Title }} - {{ .Site.Params.headline }}" />
+{{ else }}
+<meta name="application-name" content="{{ .Title }}" />
+{{ end }}
+<meta name="description" content="👨‍💻 A student and open sourcerer that does a bit of everything, none specially well.">
+
 <base href="{{ .Permalink }}">
 <link rel="canonical" href="{{ .Permalink }}" itemprop="url" />
 <meta name="url" content="{{ .Permalink }}" />
@@ -12,7 +18,6 @@
 <meta name="twitter:creator" content="{{ .Site.Params.twitter }}" />
 
 <meta property="og:locale" content="{{ .Language.Lang }}">
-<meta name="language" content="{{ .Language.LanguageName }}">
 {{ range .AllTranslations }}
   <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" title="{{ .Language.LanguageName }}">
 {{ end }}
