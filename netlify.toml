@@ -21,3 +21,7 @@ HUGO_VERSION = "0.80.0"
 
 [context.next.environment]
 HUGO_ENABLEGITINFO = "true"
+
+[[headers]]
+[headers.values]
+Strict-Transport-Security = "max-age=63072000; preload"
