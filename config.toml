@@ -1,19 +1,27 @@
 title = "Agustín Covarrubias"
 baseURL = "https://agucova.dev/"
 languageCode = "en-us"
+DefaultContentLanguage = "en"
 enableEmoji = true
 
 [taxonomies]
 tag = "tags"
 
 [params]
+author = "Agustín Covarrubias"
+sitename = "Agustín Covarrubias"
+description = "A student and open sourcerer that does a bit of everything, none specially well."
+
+github = "https://github.com/agucova"
+twitter = "@austinc3301"
+
 dateFormat = "Jan 2, 2021"
 homeTitle = "Hi there, I'm Agustín 👋"
 homeBody = """
 > "Somewhere, something incredible is waiting to be known."
 > — Carl Sagan
 
-I'm a student and open sourcerer that does a bit of everything, none specially well. I'm from Chile (chile) and I'm currently studying engineering at the Universidad Católica de Chile.
+I'm a student and open sourcerer that does a bit of everything, none specially well. I'm from Chile (🇨🇱) and I'm currently studying engineering at the Universidad Católica de Chile.
 
 I program in C and Python but I'm constantly learning and toying with new languages, currently Nim . My main interest is biomedical engineering, but I'm also interested in Computer Science (go CS50x!), Quantified Self and Meta-Science, along with a bunch of other things. I'm a yearly organizer of March for Science Chile.
 
@@ -21,3 +29,13 @@ I program in C and Python but I'm constantly learning and toying with new langua
 
 My pronouns are he/him.
 """
+[languages]
+[language.en]
+languageName = "English"
+languageCode = "en-us"
+weight = 1
+
+[language.es]
+languageName = "Spanish"
+languageCode = "es"
+weight = 2
