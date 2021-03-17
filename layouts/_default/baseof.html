@@ -5,6 +5,7 @@
       <main >
         {{ block "main" . }}{{ end }}
       </main>
+      {{ partial "social.html" }}<br>
       {{ partial "nav.html" . }}
       {{ "<!-- This is my humble attempt at analytics. -->" | safeHTML }}
       {{ "<!-- This honors DNT and only tracks essentials statistics. Check https://github.com/milesmcc/shynet for details. -->" | safeHTML }}

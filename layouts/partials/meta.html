@@ -1,4 +1,8 @@
 <title>Agustín Covarrubias - Student and open sourcerer</title>
+
+{{ "<!-- Hi there! I'm glad you're seeing this source code. //-->" | safeHTML }}
+{{ "<!-- Definitely check the repository at https://github.com/agucova/web-future //-->" | safeHTML }}
+
 {{ if .IsHome}}
     <meta name="application-name" content="{{ .Title }} - {{ .Site.Params.headline }}" />
 {{ else }}
@@ -14,8 +18,8 @@
 <meta name="robots" content="index,follow" />
 <meta name="googlebot" content="index,follow" />
 
-<meta name="twitter:site" content="{{ .Site.Params.twitter }}">
-<meta name="twitter:creator" content="{{ .Site.Params.twitter }}" />
+<meta name="twitter:site" content="@{{ .Site.Params.twitter }}">
+<meta name="twitter:creator" content="@{{ .Site.Params.twitter }}" />
 
 <meta property="og:locale" content="{{ .Language.Lang }}">
 {{ range .AllTranslations }}

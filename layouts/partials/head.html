@@ -1,15 +1,13 @@
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
-    {{ $water := "css/water.css" | absURL -}}
-    {{- $css := "css/style.css" | absURL -}}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> {{ $water := "css/water.css" | absURL -}} {{- $css := "css/style.css" | absURL -}}
 
     <link rel="stylesheet" href="{{$water}}" />
     <link rel="stylesheet" href="{{$css}}" />
+    <script src="https://kit.fontawesome.com/68bd2bccda.js" crossorigin="anonymous"></script>
 
     {{ partial "meta" . }}
 
     <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
-  </head>
+</head>

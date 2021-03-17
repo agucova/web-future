@@ -1,28 +1,29 @@
-title = "Agustín Covarrubias"
+DefaultContentLanguage = "en"
 baseURL = "https://agucova.dev/"
 languageCode = "en-us"
 languageName = "English"
-DefaultContentLanguage = "en"
+title = "Agustín Covarrubias"
 
+canonifyURLs = true
 enableEmoji = true
 enableGitInfo = true
 enableRobotsTXT = true
-canonifyURLs = true
 
 [taxonomies]
 tag = "tags"
 
 [params]
 author = "Agustín Covarrubias"
-sitename = "Agustín Covarrubias"
 description = "👨‍💻 A student and open sourcerer that does a bit of everything, none specially well."
 headline = "Student and open sourcerer"
+sitename = "Agustín Covarrubias"
 
-github = "https://github.com/agucova"
-twitter = "@austinc3301"
+github = "agucova"
+keybase = "agucova"
+linkedin = "agucova"
+twitter = "austinc3301"
 
 dateFormat = "Jan 2, 2021"
-homeTitle = "Hi there, I'm Agustín 👋"
 homeBody = """
 > "Somewhere, something incredible is waiting to be known."
 > — Carl Sagan
@@ -35,13 +36,14 @@ I program in C and Python but I'm constantly learning and toying with new langua
 
 My pronouns are he/him.
 """
+homeTitle = "Hi there, I'm Agustín 👋"
 [languages]
 [language.en]
-languageName = "English"
 languageCode = "en-us"
+languageName = "English"
 weight = 1
 
 [language.es]
-languageName = "Spanish"
 languageCode = "es"
+languageName = "Spanish"
 weight = 2
