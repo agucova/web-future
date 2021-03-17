@@ -3,8 +3,11 @@
     --background-body: rgb(0, 0, 0);
   }
   i.fas, i.fab {
-    color: #efefef;
+    color: hsl(0, 0%, 94%);
   }
+}
+i.fas, i.fab {
+  color: var(--text-main);
 }
 
 main {
