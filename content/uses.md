@@ -2,7 +2,7 @@
 title = "What I use"
 type = "page"
 layout = "uses"
-date = "2021-09-27"
+date = "2021-11-06T15:55:17+0000"
 +++
 - **OS:** [Pop_OS! 20.10](https://pop.system76.com/)
 - **Editor:** [VSCode](https://code.visualstudio.com/) (main driver) / [micro](https://micro-editor.github.io/) (terminal)
