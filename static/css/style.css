@@ -37,12 +37,10 @@ p {
     /* white-space:nowrap; */
 }
 
-a {
-    padding: .2em;
-  }
+#social a, #lower-nav a {
+  padding: .2em;
   
   @media (pointer: coarse) {
-    a {
       padding: .8em;
-    }
   }
+}
