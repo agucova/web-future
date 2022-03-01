@@ -44,3 +44,9 @@ p {
       padding: .8em;
   }
 }
+
+.pgp-wrapper {
+  font-family: 'courier new', fixed, monospace;
+  font-size: 13.5px;
+  cursor: pointer;
+}
