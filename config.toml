@@ -24,6 +24,8 @@ linkedin = "agucova"
 twitter = "austinc3301"
 
 dateFormat = "Jan 2, 2021"
+
+homeTitle = "Hi there, I'm Agus 👋"
 homeBody = """
 > "Somewhere, something incredible is waiting to be known."
 > — Carl Sagan
@@ -38,7 +40,6 @@ I'm the Digital Platforms Lead at [América Transparente](https://americatranspa
 
 My pronouns are he/him.
 """
-homeTitle = "Hi there, I'm Agustín 👋"
 
 
 [languages]
