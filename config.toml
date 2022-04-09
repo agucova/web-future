@@ -28,17 +28,19 @@ homeBody = """
 > "Somewhere, something incredible is waiting to be known."
 > — Carl Sagan
 
-I'm an engineering student and [open sourcerer](https://github.com/agucova) that does a bit of everything, nothing specially well. I'm from Chile  🇨🇱 and I'm currently majoring in Computer Science Engineering 👨‍💻 at [UC Chile](https://www.uc.cl/en).
+I'm an engineering student and [open sourcerer](https://github.com/agucova) that does a bit of everything, nothing specially well. I'm from Chile  🇨🇱 and I'm currently an undergraduate majoring in Computer Science Engineering 👨‍💻 at [UC Chile](https://www.uc.cl/en).
 
-I program mostly in Python and Julia, but I'm constantly learning and toying with new languages, currently Rust. I'm strongly interested in interdisciplinary scientific work, spanning everything from biomedical engineering to [metascience](https://en.wikipedia.org/wiki/Metascience). 
+I'm very passionate about computer science, cybersecurity and using tech for social impact. I'm a big fan of interdisciplinary work, spanning everything from edtech to metascience, and I've also been involved in public policy and consultancy.
 
-I've been an organizer of March for Science Chile since 2017, and I currently volunteer as a back-end and infrastructure engineer at [América Transparente](https://americatransparente.org/), an NGO working on enabling government transparency throughout Latin America.
+I've been an organizer of [March for Science](https://marchforscience.org/) Chile since 2017, and I volunteer as the Digital Platforms lead at [América Transparente](https://americatransparente.org/), an NGO working on enabling government transparency throughout Latin America by building open source tools for journalists.
 
 💬 Feel free to contact me if you're looking to collaborate on something!
 
 My pronouns are he/him.
 """
 homeTitle = "Hi there, I'm Agustín 👋"
+
+
 [languages]
 [language.en]
 languageCode = "en-us"
