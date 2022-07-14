@@ -1,8 +1,6 @@
-{{ if .IsHome -}}
-<title>{{ .Site.Title }} — {{.Site.Params.Headline}}</title>
-{{- else -}}
-<title>{{ .Title }} — {{ .Site.Title }}</title>
-{{- end }}
+{{ $title := cond (.IsHome) (printf "%s — %s" .Site.Title .Site.Params.Headline) (printf "%s — %s" .Title .Site.Title) }}
+
+<title>{{$title}}</title>
 
 <meta name="description"
   content="{{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.Description }}{{ end }}" />
@@ -25,7 +23,7 @@
 <meta name="twitter:creator" content="@{{ .Site.Params.twitter }}" />
 <meta property="twitter:card" content="summary_large_image">
 <meta property="twitter:url" content="https://agucova.dev/">
-<meta property="twitter:title" content="Agustín Covarrubias — Student and open sourcerer">
+<meta property="twitter:title" content="{{$title}}">
 <meta property="twitter:description"
   content="👨‍💻 A student and open sourcerer that does a bit of everything, none specially well.">
 <meta property="twitter:image" content="{{$banner}}">
