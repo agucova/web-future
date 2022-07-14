@@ -1,14 +1,15 @@
-<title>Agustín Covarrubias - Student and open sourcerer</title>
+{{ if .IsHome -}}
+<title>{{ .Site.Title }} — {{.Site.Params.Headline}}</title>
+{{- else -}}
+<title>{{ .Title }} — {{ .Site.Title }}</title>
+{{- end }}
+
+<meta name="description"
+  content="{{ if .Params.summary }}{{ .Params.summary }}{{ else if .Site.Params.Description }}{{ .Site.Params.Description }}{{ else }}Something hardcoded{{ end }}" />
+
 
 {{ "<!-- Hi there! I'm glad you're seeing this source code. -->" | safeHTML }}
 {{ "<!-- Definitely check the repository at https://github.com/agucova/web-future -->" | safeHTML }}
-
-{{ if .IsHome}}
-    <meta name="application-name" content="{{ .Title }} - {{ .Site.Params.headline }}" />
-{{ else }}
-<meta name="application-name" content="{{ .Title }}" />
-{{ end }}
-<meta name="description" content="👨‍💻 A student and open sourcerer that does a bit of everything, none specially well.">
 
 <base href="{{ .Permalink }}">
 <link rel="canonical" href="{{ .Permalink }}" />
@@ -18,17 +19,24 @@
 <meta name="robots" content="index,follow" />
 <meta name="googlebot" content="index,follow" />
 
+{{ $banner := "img/banner.svg" | absURL -}}
+
 <meta name="twitter:site" content="@{{ .Site.Params.twitter }}">
 <meta name="twitter:creator" content="@{{ .Site.Params.twitter }}" />
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://agucova.dev/">
+<meta property="twitter:title" content="Agustín Covarrubias — Student and open sourcerer">
+<meta property="twitter:description"
+  content="👨‍💻 A student and open sourcerer that does a bit of everything, none specially well.">
+<meta property="twitter:image" content="{{$banner}}">
 
 <meta property="og:locale" content="{{ .Language.Lang }}">
 {{ range .AllTranslations }}
   <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" title="{{ .Language.LanguageName }}">
 {{ end }}
 
-{{ template "_internal/schema.html" . }}
 {{ template "_internal/opengraph.html" . }}
-{{ template "_internal/twitter_cards.html" . }}
+<meta property="og:image" content="{{$banner}}">
 
 <script type='application/ld+json'>
 {

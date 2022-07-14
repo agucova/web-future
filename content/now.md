@@ -3,6 +3,7 @@ title = "What I'm currently up to"
 type = "page"
 date = "2022-07-13T09:55:17+0000"
 layout = "single"
+description = "⏰ A list of the things I'm currently doing, updated periodically."
 +++
 
 <details open>
