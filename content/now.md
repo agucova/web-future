@@ -52,7 +52,7 @@ I'm currently working in two proposals for [UC's School of Engineering](https://
 
 ## 🤚 Altruismo Efectivo UC
 
-I'm helping to set up an [Effective Altruism](https://effectivealtruism.org/) chapter at UC Chile; we are now participating in some extremely cool workshops for university chapters and organizing some talks for the near future.
+I'm helping to set up an [Effective Altruism](https://effectivealtruism.org/) chapter at UC Chile. We are now participating in some extremely cool workshops for university chapters and organizing some talks for the near future, stay tuned.
 
 ## 🚆 Random stuff
 
