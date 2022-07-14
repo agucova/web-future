@@ -7,7 +7,7 @@ layout = "single"
 
 <details open>
 <summary>What is this page?</summary>
-<p>This page is a list of the things I'm currently doing, following the format laid our by the <a href="https://nownownow.com/about"><code>/now</code></a> movement.</p>
+<p>This page is a list of the things I'm currently doing, following the format laid out by the <a href="https://nownownow.com/about"><code>/now</code></a> movement.</p>
 <p>This page has a dual purpose:</p>
 <ul>
     <li>It helps you know what I'm up to (if you're so inclined)</li>
