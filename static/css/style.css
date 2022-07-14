@@ -3,15 +3,16 @@ i.fab {
   color: var(--text-main);
 }
 
+
 main {
-  margin-top: 100px;
+  margin-top: 0px;
   margin-bottom: 40px;
   margin-left: 90px;
   margin-right: 90px;
 }
 
 nav {
-  /* margin-top: 40px; */
+  margin-top: 40px;
   /* flex */
   display: flex;
   justify-content: space-around;
@@ -44,7 +45,7 @@ p {
 }
 
 #social a,
-#lower-nav a {
+#upper-nav a {
   padding: .2em;
 
   @media (pointer: coarse) {

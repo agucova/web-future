@@ -2,11 +2,11 @@
 <html lang="{{ .Site.LanguageCode }}">
 {{ partial "head.html" . }}
   <body>
+      {{ partial "nav.html" . }}
       <main >
         {{ block "main" . }}{{ end }}
       </main>
       {{ partial "social.html" . }}<br>
-      {{ partial "nav.html" . }}
       {{ partial "dark-mode-toggle.html" . }}
       {{ partial "analytics.html" . }}
   </body>
