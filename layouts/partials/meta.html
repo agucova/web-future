@@ -1,9 +1,10 @@
 {{ $title := cond (.IsHome) (printf "%s — %s" .Site.Title .Site.Params.Headline) (printf "%s — %s" .Title .Site.Title) }}
+{{ $description := cond (isset .Params "description") (.Params.description) (.Site.Params.Description) }}
 
-<title>{{$title}}</title>
+<title>{{ $title }}</title>
 
 <meta name="description"
-  content="{{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.Description }}{{ end }}" />
+  content="{{ $description }}" />
 
 
 {{ "<!-- Hi there! I'm glad you're seeing this source code. -->" | safeHTML }}
@@ -25,7 +26,7 @@
 <meta property="twitter:url" content="https://agucova.dev/">
 <meta property="twitter:title" content="{{$title}}">
 <meta property="twitter:description"
-  content="👨‍💻 A student and open sourcerer that does a bit of everything, none specially well.">
+  content="{{$description}}">
 <meta property="twitter:image" content="{{$banner}}">
 
 <meta property="og:locale" content="{{ .Language.Lang }}">
