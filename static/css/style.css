@@ -51,3 +51,7 @@ p {
   font-size: 13.5px;
   cursor: pointer;
 }
+
+.highlight > pre {
+  background-color: unset !important;
+}
