@@ -55,3 +55,8 @@ p {
 .highlight > pre {
   background-color: unset !important;
 }
+
+ul li {
+  /* Increase the default spacing between list items */
+  margin-bottom: 0.6em;
+}
