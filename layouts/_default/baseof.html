@@ -5,10 +5,9 @@
       <main >
         {{ block "main" . }}{{ end }}
       </main>
-      {{ partial "social.html" }}<br>
+      {{ partial "social.html" . }}<br>
       {{ partial "nav.html" . }}
-      {{ "<!-- This is my humble attempt at analytics. -->" | safeHTML }}
-      {{ "<!-- This honors DNT and only tracks essentials statistics. Check https://github.com/milesmcc/shynet and https://developers.cloudflare.com/analytics/web-analytics/understanding-web-analytics/data-origin-and-collection for details. -->" | safeHTML }}
-      {{ partial "analytics.html" .}}
+      {{ partial "dark-mode-toggle.html" . }}
+      {{ partial "analytics.html" . }}
   </body>
 </html>

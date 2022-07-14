@@ -1,0 +1,8 @@
+:root {
+    --background-body: hsl(214, 70%, 10%);
+}
+
+i.fas,
+i.fab {
+    color: hsl(0, 0%, 94%);
+}

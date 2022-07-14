@@ -1,9 +1,21 @@
-<center><nav id="lower-nav">
-  {{ if not .IsHome}}
-  <a class="container" title="Home" href="/">/</a>&nbsp;&nbsp;
-  {{ end }}
-  <a class="container" title="Now" href="/now">/now</a>&nbsp;&nbsp;
-  <a class="container" title="Uses" href="/uses">/uses</a>&nbsp;&nbsp;
-  <a class="container" title="CV" href="https://www.linkedin.com/in/agucova/">/cv</a>&nbsp;&nbsp;
-  <a class="container" title="PGP" href="/pgp/">/pgp</a>
-</nav></center>
+<center>
+  <nav id="lower-nav">
+    {{ if not .IsHome}}
+    <div>
+      <a class="container" title="Home" href="/">/</a>
+    </div>
+    {{ end }}
+    <div>
+      <a class="container" title="Now" href="/now">/now</a>
+    </div>
+    <div>
+      <a class="container" title="Uses" href="/uses">/uses</a>
+    </div>
+    <div>
+      <a class="container" title="PGP" href="/pgp/">/pgp</a>
+    </div>
+    <div>
+      <a class="container" title="CV" href="https://www.linkedin.com/in/agucova/">/cv</a>
+    </div>
+  </nav>
+</center>

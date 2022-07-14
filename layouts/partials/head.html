@@ -2,11 +2,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    {{ $water := "css/water.css" | absURL -}} {{- $css := "css/style.css" | absURL -}}
+    {{ $dark := "css/water-dark.css" | absURL -}} {{ $light := "css/water-light.css" | absURL -}} {{- $css := "css/style.css" | absURL -}} {{- $css_dark := "css/style-dark.css" | absURL -}}
 
-    <link rel="stylesheet" href="{{$water}}" />
+    <link rel="stylesheet" href="{{$dark}}" media="(prefers-color-scheme: dark)" />
+    <link rel="stylesheet" href="{{$light}}" media="(prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="{{$css_dark}}" media="(prefers-color-scheme: dark)"/>
     <link rel="stylesheet" href="{{$css}}" />
-    <script defer src="https://kit.fontawesome.com/68bd2bccda.js" integrity="sha384-CXEZAamSZR/L6hk9/cn1JGPL2YcNQhKxm81xXk3EGev+yCyrvF1yozTShV3rnrYE" crossorigin="anonymous"></script>
+    {{ $toggle := "js/dark-mode-toggle.mjs" | absURL -}}
+    <script type="module" src="{{$toggle}}" fetchpriority="high"></script>
+    <script defer src="https://kit.fontawesome.com/68bd2bccda.js"
+        integrity="sha384-CXEZAamSZR/L6hk9/cn1JGPL2YcNQhKxm81xXk3EGev+yCyrvF1yozTShV3rnrYE"
+        crossorigin="anonymous"></script>
 
     {{ partial "meta" . }}
 

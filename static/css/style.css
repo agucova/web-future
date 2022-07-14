@@ -1,12 +1,5 @@
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-body: rgb(0, 0, 0);
-  }
-  i.fas, i.fab {
-    color: hsl(0, 0%, 94%);
-  }
-}
-i.fas, i.fab {
+i.fas,
+i.fab {
   color: var(--text-main);
 }
 
@@ -16,6 +9,18 @@ main {
   margin-left: 90px;
   margin-right: 90px;
 }
+
+nav {
+  /* margin-top: 40px; */
+  /* flex */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-flow: row wrap;
+  width: 200px;
+
+}
+
 
 h1 {
   font-size: 3em;
@@ -34,15 +39,16 @@ p {
 }
 
 #social {
-    font-size: 1.5em;
-    text-align: center;
+  font-size: 1.5em;
+  text-align: center;
 }
 
-#social a, #lower-nav a {
+#social a,
+#lower-nav a {
   padding: .2em;
 
   @media (pointer: coarse) {
-      padding: .8em;
+    padding: .8em;
   }
 }
 
@@ -52,11 +58,19 @@ p {
   cursor: pointer;
 }
 
-.highlight > pre {
+.highlight>pre {
   background-color: unset !important;
 }
 
 ul li {
   /* Increase the default spacing between list items */
   margin-bottom: 0.4em;
+}
+
+dark-mode-toggle {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 0.5em;
 }

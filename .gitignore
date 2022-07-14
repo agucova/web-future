@@ -183,3 +183,6 @@ dmypy.json
 
 # Hugo
 /public
+
+# macOS
+.DS_Store
