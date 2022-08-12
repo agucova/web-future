@@ -20,18 +20,21 @@ description = "⏰ A list of the things I'm currently doing, updated periodicall
 
 I'm currently studying Computer Science Engineering at [UC Chile](https://uc.cl/en).
 
-My ~~current~~ just finished course workload is:
+My ~~current~~ course workload is:
 
-- Topics in Strategic Analysis (ICP0323)
-- Software Engineering (IIC2143)
-- Databases (IIC2413)
-- Introduction to Economics (ICS1513)
+- Discrete Mathematics (IIC1253)
+- Electricity and Magnetism (FIS1533)
+- Web technologies and applications (IIC2513)
 
 ## 🏛️ América Transparente
 
 I'm working pro bono as the Digital Platforms lead for [América Transparente](https://www.americatransparente.org). I'm currently trying to unifying the infrastructure behind two of our platforms, [Reguleque](https://reguleque.cl) and [Dueños Directos](https://dd.americatransparente.org) to cut some costs and make it all more maintainable.
 
-👉 I'll be speaking about my work in the foundation in a short talk at [JuliaCon 2022](https://juliacon.org/2022/), coming july 27th.
+👉 I recently gave a 3-minute talk about my work at [JuliaCon 2022](https://www.youtube.com/watch?v=374v9cNc03k).
+
+## 🤚 Altruismo Efectivo UC
+
+I'm helping to set up an [Effective Altruism](https://effectivealtruism.org/) chapter at UC Chile. We are now participating in some extremely cool workshops for university chapters and organizing some talks for the near future, stay tuned.
 
 ## 🚀 EDAE
 
@@ -51,9 +54,6 @@ I'm currently working in two proposals for [UC's School of Engineering](https://
 
 - 📈 **Building a new planner:** We made a [proposal](https://drive.google.com/file/d/1IxAJ8cCzDkayPwnju5kgc2oKc7g9fvwf/view?usp=sharing) to renew the School's planner application by replacing it with a platform made by students for students, inspired by Princeton's [TigerPath](https://www.tigerpath.io/). It got initial approval, and we're just waiting to get started.
 
-## 🤚 Altruismo Efectivo UC
-
-I'm helping to set up an [Effective Altruism](https://effectivealtruism.org/) chapter at UC Chile. We are now participating in some extremely cool workshops for university chapters and organizing some talks for the near future, stay tuned.
 
 ## 🚆 Random stuff
 
