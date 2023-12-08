@@ -39,18 +39,6 @@ Lately, I've started to work under the umbrella of the [Effective Altruism](http
 ℹ️ I hold drop-in hours each saturday to talk about Effective Altruism, AI Safety and open source. Feel free to [pass by](https://calendly.com/agucova/drop-in-hours).
 """
 
-
-[languages]
-[language.en]
-languageCode = "en-us"
-languageName = "English"
-weight = 1
-
-[language.es]
-languageCode = "es"
-languageName = "Spanish"
-weight = 2
-
 [markup]
 [markup.goldmark]
 [markup.goldmark.renderer]

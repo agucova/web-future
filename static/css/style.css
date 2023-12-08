@@ -20,7 +20,7 @@ nav {
   justify-content: space-around;
   align-items: center;
   flex-flow: row wrap;
-  max-width: 230px;
+  max-width: 250px;
 }
 
 
@@ -53,7 +53,7 @@ p {
   padding: .2em;
 
   @media (pointer: coarse) {
-    padding: .8em;
+    padding: .3em;
   }
 }
 
