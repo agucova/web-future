@@ -1,32 +1,3 @@
-DefaultContentLanguage = "en"
-baseURL = "https://agucova.dev/"
-languageCode = "en-us"
-languageName = "English"
-title = "Agustín Covarrubias"
-
-canonifyURLs = true
-enableEmoji = true
-enableGitInfo = true
-enableRobotsTXT = true
-
-[taxonomies]
-tag = "tags"
-
-[params]
-author = "Agustín Covarrubias"
-description = "👨‍💻 A professional community builder and software engineer that does a bit of everything, but nothing specially well."
-headline = "Community builder and open sourcerer"
-sitename = "Agustín Covarrubias"
-
-github = "agucova"
-keybase = "agucova"
-linkedin = "agucova"
-twitter = "austinc3301"
-
-dateFormat = "Jan 2, 2021"
-
-homeTitle = "Hi there, I'm Agus 👋"
-homeBody = """
 > "Somewhere, something incredible is waiting to be known."
 > — Carl Sagan
 
@@ -37,9 +8,3 @@ I'm very passionate about computer science, cybersecurity and using tech for soc
 I've been working for a few years under the umbrella of the [Effective Altruism](https://www.effectivealtruism.org/) community, and I think [mitigating the risk of extinction from AI should be a global priority alongside other societal-scale risks such as pandemics and nuclear war](https://www.safe.ai/work/statement-on-ai-risk/). This is my main focus right now.
 
 ℹ️ I hold drop-in hours each saturday to talk about Effective Altruism, AI Safety and open source. Feel free to [pass by](https://calendly.com/agucova/drop-in-hours).
-"""
-
-[markup]
-[markup.goldmark]
-[markup.goldmark.renderer]
-unsafe = true

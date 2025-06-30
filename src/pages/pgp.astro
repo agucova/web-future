@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = "PGP";
+const description = "🔐 How to reach me securely, audit my public identity and find my PGP keys.";
+---
+
+<Layout title={title} description={description}>
+    <h1>{title}</h1>
+    
+    <p>If you want to communicate with me securely, you should start by publicly auditing my identity and its associated key through my <a href="https://keybase.io/agucova">Keybase profile</a>. You can send me secure messages using the <a href="https://keybase.io/agucova/chat/">Keybase app</a>, or by sending me an encrypted email using the <a href="https://protonmail.com/blog/what-is-pgp-encryption/">OpenPGP</a> protocol to <a href="mailto:agustin@agucova.dev">agustin@agucova.dev</a>. If your email client doesn't support it, you can find a suitable client or addon <a href="https://www.openpgp.org/software/">here</a>.</p>
+
+    <h2>A copy of my PGP key</h2>
+    <p>My PGP fingerprint is: <code>503B 2899 F90F 9FE5 BF33 1E3C D0B5 DA36 0A0D A1E0</code></p>
+    <p>64-bit: <code>D0B5 DA36 0A0D A1E0</code></p>
+    
+    <pre><code># curl + gpg pro tip: import my keys
+curl https://agucova.dev/pgp.asc | gpg --import</code></pre>
+
+    <details>
+        <summary>Annotated PGP Key</summary>
+        <textarea class="pgp-wrapper" rows="15" readonly="true" onclick="this.focus();this.select()"></textarea>
+    </details>
+    
+    <script>
+        // Load PGP key content
+        fetch('/pgp.asc')
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('.pgp-wrapper').textContent = data;
+            })
+            .catch(error => console.error('Error loading PGP key:', error));
+    </script>
+</Layout>

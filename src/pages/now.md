@@ -1,10 +1,10 @@
-+++
-title = "What I'm currently up to"
-type = "page"
-date = "2022-08-12T09:55:17+0000"
-layout = "single"
-description = "⏰ A list of the things I'm currently doing, updated periodically."
-+++
+---
+layout: '../layouts/Layout.astro'
+title: "What I'm currently up to"
+description: "⏰ A list of the things I'm currently doing, updated periodically."
+---
+
+# What I'm currently up to
 
 <details open>
 <summary>What is this page?</summary>
@@ -53,7 +53,6 @@ I'm currently working in two proposals for [UC's School of Engineering](https://
 - 🙌 **Ethics in Engineering:** We're trying to help shape our own ethics across the curriculum program by linking it with lessons learned in [Mozilla's Responsible Computing Science Challenge](https://foundation.mozilla.org/en/what-we-fund/awards/responsible-computer-science-challenge/), as well as similar [initiatives at Stanford](https://cs4good.com/). We made an [initial presentation](https://docs.google.com/presentation/d/1J122Xi1s6XiPIUZx6ZLaloQSQR3Di_vijXghbxz4jZo/edit?usp=sharing), and the next step is laying out a strategy.
 
 - 📈 **Building a new planner:** We made a [proposal](https://drive.google.com/file/d/1IxAJ8cCzDkayPwnju5kgc2oKc7g9fvwf/view?usp=sharing) to renew the School's planner application by replacing it with a platform made by students for students, inspired by Princeton's [TigerPath](https://www.tigerpath.io/). It got initial approval, and we're just waiting to get started.
-
 
 ## 🚆 Random stuff
 

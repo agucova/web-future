@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HomeContent from '../content/home.md';
+
+const homeTitle = "Hi there, I'm Agus 👋";
+const description = "👨‍💻 A professional community builder and software engineer that does a bit of everything, but nothing specially well.";
+---
+
+<Layout title="Home" description={description} isHome={true}>
+    <h1>{homeTitle}</h1>
+    <HomeContent />
+</Layout>
