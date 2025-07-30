@@ -7,68 +7,204 @@ export interface Props {
 
 const { title, description, isHome = false } = Astro.props;
 const siteName = "Agustín Covarrubias";
-const pageTitle = isHome ? siteName : `${title} | ${siteName}`;
+const pageTitle = isHome ? "Agustín Covarrubias — Community builder and open sourcerer" : `${title} | ${siteName}`;
+const siteUrl = "https://agucova.dev";
+const currentUrl = Astro.url.pathname === "/" ? siteUrl : `${siteUrl}${Astro.url.pathname}`;
+const defaultDescription = "👨‍💻 A professional community builder and software engineer that does a bit of everything, but nothing specially well.";
+const metaDescription = description || defaultDescription;
 ---
 
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    
-    <title>{pageTitle}</title>
-    {description && <meta name="description" content={description}>}
-    
-    <link rel="stylesheet" href="/css/water-dark.css" media="(prefers-color-scheme: dark)" />
-    <link rel="stylesheet" href="/css/water-light.css" media="(prefers-color-scheme: light)" />
-    <link rel="stylesheet" href="/css/style-dark.css" media="(prefers-color-scheme: dark)" />
-    <link rel="stylesheet" href="/css/style.css" />
-    
-    <script type="module" src="/js/dark-mode-toggle.mjs" fetchpriority="high"></script>
-    <script defer src="https://kit.fontawesome.com/68bd2bccda.js" crossorigin="anonymous"></script>
-    
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/site.webmanifest">
-</head>
-<body>
-    <nav id="upper-nav">
-        {!isHome && (
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <title>{pageTitle}</title>
+        <meta name="description" content={metaDescription} />
+        
+        <!-- SEO and Social Meta Tags -->
+        <link rel="canonical" href={currentUrl} />
+        <meta name="url" content={currentUrl} />
+        <meta name="robots" content="index,follow" />
+        <meta name="googlebot" content="index,follow" />
+        
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:site" content="@austinc3301" />
+        <meta name="twitter:creator" content="@austinc3301" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={currentUrl} />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={metaDescription} />
+        <meta property="twitter:image" content={`${siteUrl}/banner.png`} />
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:locale" content="en" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:image" content={`${siteUrl}/banner.png`} />
+
+        <link
+            rel="stylesheet"
+            href="/css/water-dark.css"
+            media="(prefers-color-scheme: dark)"
+        />
+        <link
+            rel="stylesheet"
+            href="/css/water-light.css"
+            media="(prefers-color-scheme: light)"
+        />
+        <link
+            rel="stylesheet"
+            href="/css/style-dark.css"
+            media="(prefers-color-scheme: dark)"
+        />
+        <link rel="stylesheet" href="/css/style.css" />
+
+        <script
+            type="module"
+            src="/js/dark-mode-toggle.mjs"
+            fetchpriority="high"></script>
+        <script
+            defer
+            src="https://kit.fontawesome.com/68bd2bccda.js"
+            crossorigin="anonymous"></script>
+
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+        
+        <!-- Prefetch Links -->
+        <link rel="prefetch" href="/uses" as="document" />
+        <link rel="prefetch" href="/now" as="document" />
+        <link rel="prefetch" href="/pgp" as="document" />
+        
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+        {
+            "@context": "http://www.schema.org",
+            "@type": "Person",
+            "name": "Agustin Covarrubias",
+            "jobTitle": "Digital Platforms Lead",
+            "url": "https://agucova.dev/"
+        }
+        </script>
+        
+        <script>
+            window.SavvyCal =
+                window.SavvyCal ||
+                function () {
+                    (SavvyCal.q = SavvyCal.q || []).push(arguments);
+                };
+        </script>
+        <script async src="https://embed.savvycal.com/v1/embed.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.SavvyCal && typeof window.SavvyCal === 'function') {
+                    SavvyCal("init");
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <nav id="upper-nav">
+            {
+                !isHome && (
+                    <div>
+                        <a class="container" title="Home" href="/" aria-label="Go to home page">
+                            /
+                        </a>
+                    </div>
+                )
+            }
             <div>
-                <a class="container" title="Home" href="/">/</a>
+                <a class="container" title="Now" href="/now" aria-label="See what I'm doing now">/now</a>
             </div>
-        )}
-        <div>
-            <a class="container" title="Now" href="/now">/now</a>
-        </div>
-        <div>
-            <a class="container" title="PGP" href="/pgp">/pgp</a>
-        </div>
-        <div>
-            <a class="container" title="Feedback" href="https://admonymous.co/agucova" target="_blank">/feedback</a>
-        </div>
-        <div>
-            <a class="container" title="CV" href="https://www.linkedin.com/in/agucova/">/cv</a>
-        </div>
-        <div>
-            <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-            <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
-            <a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/agucova'});return false;">/meet</a>
-        </div>
-    </nav>
-    
-    <main>
-        <slot />
-    </main>
-    
-    <div id="social">
-        <a title="GitHub" target="_blank" href="https://github.com/agucova" rel="noopener noreferrer"><i class="fab fa-github"></i></a>&nbsp;&nbsp;&nbsp;
-        <a title="LinkedIn" target="_blank" href="https://www.linkedin.com/in/agucova/" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>&nbsp;&nbsp;&nbsp;
-        <a title="Keybase" target="_blank" href="https://keybase.io/agucova" rel="noopener noreferrer"><i class="fab fa-keybase"></i></a>&nbsp;&nbsp;&nbsp;
-        <a title="Twitter" target="_blank" href="https://twitter.com/austinc3301" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>&nbsp;&nbsp;&nbsp;
-        <a title="Email" href="#" class="cryptedmail" data-name="hi" data-domain="agucova" data-tld="dev" onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;" rel="noopener noreferrer"><i class="fas fa-envelope"></i></a>
-    </div><br>
-    
-    <dark-mode-toggle permanent></dark-mode-toggle>
-</body>
+            <div>
+                <a class="container" title="PGP" href="/pgp" aria-label="View my PGP public key">/pgp</a>
+            </div>
+            <div>
+                <a
+                    class="container"
+                    title="Feedback"
+                    href="https://admonymous.co/agucova"
+                    target="_blank"
+                    aria-label="Send anonymous feedback">/feedback</a
+                >
+            </div>
+            <div>
+                <a
+                    class="container"
+                    title="CV"
+                    href="https://www.linkedin.com/in/agucova/"
+                    aria-label="View my CV on LinkedIn">/cv</a
+                >
+            </div>
+            <div>
+                <a
+                    href="https://savvycal.com/agucova/drop-in-hours"
+                    data-savvycal-embed
+                    aria-label="Schedule a meeting with me">/meet</a
+                >
+            </div>
+        </nav>
+
+        <main>
+            <slot />
+        </main>
+
+        <div id="social">
+            <a
+                title="GitHub"
+                target="_blank"
+                href="https://github.com/agucova"
+                rel="noopener noreferrer"
+                aria-label="GitHub"><i class="fab fa-github"></i></a
+            >&nbsp;&nbsp;&nbsp;
+            <a
+                title="LinkedIn"
+                target="_blank"
+                href="https://www.linkedin.com/in/agucova/"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a
+            >&nbsp;&nbsp;&nbsp;
+            <a
+                title="Keybase"
+                target="_blank"
+                href="https://keybase.io/agucova"
+                rel="noopener noreferrer"
+                aria-label="Keybase"><i class="fab fa-keybase"></i></a
+            >&nbsp;&nbsp;&nbsp;
+            <a
+                title="Twitter"
+                target="_blank"
+                href="https://twitter.com/austinc3301"
+                rel="noopener noreferrer"
+                aria-label="Twitter"><i class="fab fa-twitter"></i></a
+            >&nbsp;&nbsp;&nbsp;
+            <a
+                title="Email"
+                href="#"
+                class="cryptedmail"
+                data-name="hi"
+                data-domain="agucova"
+                data-tld="dev"
+                onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;"
+                rel="noopener noreferrer"
+                aria-label="Email"><i class="fas fa-envelope"></i></a
+            >
+        </div><br />
+
+        <dark-mode-toggle permanent></dark-mode-toggle>
+        
+        <!-- Cloudflare Pages Analytics -->
+        <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "cc1d38a68b2d449b9237184344b32ec0"}'></script>
+        <!-- Cloudflare Pages Analytics -->
+    </body>
 </html>

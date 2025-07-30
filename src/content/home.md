@@ -7,4 +7,4 @@ I'm very passionate about computer science, cybersecurity and using tech for soc
 
 I've been working for a few years under the umbrella of the [Effective Altruism](https://www.effectivealtruism.org/) community, and I think [mitigating the risk of extinction from AI should be a global priority alongside other societal-scale risks such as pandemics and nuclear war](https://www.safe.ai/work/statement-on-ai-risk/). This is my main focus right now.
 
-ℹ️ I hold drop-in hours each saturday to talk about Effective Altruism, AI Safety and open source. Feel free to [pass by](https://calendly.com/agucova/drop-in-hours).
+ℹ️ I hold drop-in hours each saturday to talk about Effective Altruism, AI Safety and open source. Feel free to [pass by](https://savvycal.com/agucova/drop-in-hours).
