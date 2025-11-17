@@ -57,10 +57,16 @@ p {
   }
 }
 
+details {
+  align-items: stretch;
+}
+
 .pgp-wrapper {
   font-family: 'courier new', fixed, monospace;
   font-size: 13.5px;
   cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .highlight>pre {
