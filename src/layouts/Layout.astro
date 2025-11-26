@@ -1,17 +1,24 @@
 ---
 export interface Props {
-    title: string;
+    title?: string;
     description?: string;
     isHome?: boolean;
+    frontmatter?: {
+        title?: string;
+        description?: string;
+    };
 }
 
-const { title, description, isHome = false } = Astro.props;
+const { title, description, isHome = false, frontmatter } = Astro.props;
+// Use frontmatter values if available (from .md), otherwise use direct props (from .astro)
+const actualTitle = frontmatter?.title || title;
+const actualDescription = frontmatter?.description || description;
 const siteName = "Agustín Covarrubias";
-const pageTitle = isHome ? "Agustín Covarrubias — Community builder and open sourcerer" : `${title} | ${siteName}`;
+const pageTitle = isHome ? "Agustín Covarrubias — Community builder and open sourcerer" : `${actualTitle} | ${siteName}`;
 const siteUrl = "https://agucova.dev";
 const currentUrl = Astro.url.pathname === "/" ? siteUrl : `${siteUrl}${Astro.url.pathname}`;
 const defaultDescription = "👨‍💻 A professional community builder and software engineer that does a bit of everything, but nothing specially well.";
-const metaDescription = description || defaultDescription;
+const metaDescription = actualDescription || defaultDescription;
 ---
 
 <!doctype html>
