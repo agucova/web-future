@@ -1,0 +1,947 @@
+---
+// Standalone page - no layout
+---
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exiliada del Sur — Violeta Parra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="main-container">
+        <!-- Left: Poem -->
+        <div class="poem-column">
+            <div class="poem-header">
+                <h1>La Exiliada del Sur</h1>
+                <span class="subtitle">Violeta Parra</span>
+                <span class="year">(1970)</span>
+                <span class="info-icon">i
+                    <span class="tooltip">
+                        Décima n.° 58 del libro <em>Décimas: Autobiografía en verso</em>. Musicalizada por Patricio Manns en 1971. Popularizada por Inti-Illimani y Los Bunkers.
+                    </span>
+                </span>
+            </div>
+
+            <div class="poem-content">
+                <div class="stanza" data-stanza="1">
+                    <span class="stanza-number">I</span>
+                    <div class="verse-line">Un ojo dejé en <a class="place-link" data-place="los-lagos">Los Lagos</a></div>
+                    <div class="verse-line">por un descuido casual</div>
+                    <div class="verse-line">El otro quedó en <a class="place-link" data-place="parral">Parral</a></div>
+                    <div class="verse-line">en un boliche de tragos</div>
+                    <div class="verse-line">Recuerdo que mucho estrago</div>
+                    <div class="verse-line">de niña vio el alma mía</div>
+                    <div class="verse-line">Miserias y alevosías</div>
+                    <div class="verse-line">anudan mis pensamientos</div>
+                    <div class="verse-line">Entre las aguas y el viento</div>
+                    <div class="verse-line">me pierdo en la lejanía</div>
+                </div>
+
+                <div class="stanza" data-stanza="2">
+                    <span class="stanza-number">II</span>
+                    <div class="verse-line">Mi brazo derecho en <a class="place-link" data-place="buin">Buín</a></div>
+                    <div class="verse-line">quedó señores oyentes</div>
+                    <div class="verse-line">El otro por <a class="place-link" data-place="san-vicente">San Vicente</a></div>
+                    <div class="verse-line">quedó no sé con qué fin</div>
+                    <div class="verse-line">Mi pecho en <a class="place-link" data-place="curacautin">Curacautín</a></div>
+                    <div class="verse-line">lo veo en un jardincillo</div>
+                    <div class="verse-line">Mis manos, en <a class="place-link" data-place="maitencillo">Maitencillo</a></div>
+                    <div class="verse-line">saludan en <a class="place-link" data-place="pelequen">Pelequén</a></div>
+                    <div class="verse-line">Mi blusa en <a class="place-link" data-place="perquilauquen">Perquilauquén</a></div>
+                    <div class="verse-line">recoge unos pececillos</div>
+                </div>
+
+                <div class="stanza" data-stanza="3">
+                    <span class="stanza-number">III</span>
+                    <div class="verse-line">Se me enredó en <a class="place-link" data-place="san-rosendo">San Rosendo</a></div>
+                    <div class="verse-line">un pie al cruzar una esquina</div>
+                    <div class="verse-line">El otro en la <a class="place-link" data-place="quiriquina">Quiriquina</a></div>
+                    <div class="verse-line">se me hunde mares adentro</div>
+                    <div class="verse-line">Mi corazón descontento</div>
+                    <div class="verse-line">latió con pena en <a class="place-link" data-place="temuco">Temuco</a></div>
+                    <div class="verse-line">Y me ha llorado en <a class="place-link" data-place="calbuco">Calbuco</a></div>
+                    <div class="verse-line">de frío por una escarcha</div>
+                    <div class="verse-line">Voy, enderezo mi marcha</div>
+                    <div class="verse-line">a la cuesta de <a class="place-link" data-place="chacabuco">Chacabuco</a></div>
+                </div>
+
+                <div class="stanza" data-stanza="4">
+                    <span class="stanza-number">IV</span>
+                    <div class="verse-line">Mis nervios dejo en <a class="place-link" data-place="graneros">Graneros</a></div>
+                    <div class="verse-line">la sangre en <a class="place-link" data-place="san-sebastian">San Sebastián</a></div>
+                    <div class="verse-line">Y en la ciudad de <a class="place-link" data-place="chillan">Chillán</a></div>
+                    <div class="verse-line">la calma me bajó a cero</div>
+                    <div class="verse-line">Mi riñonada en <a class="place-link" data-place="cabrero">Cabrero</a></div>
+                    <div class="verse-line">destruye una caminata</div>
+                    <div class="verse-line">Y en una calle de <a class="place-link" data-place="itata">Itata</a></div>
+                    <div class="verse-line">se me rompió el instrumento</div>
+                    <div class="verse-line">Y endilgó pa' <a class="place-link" data-place="nacimiento">Nacimiento</a></div>
+                    <div class="verse-line">una mañana de plata</div>
+                </div>
+
+                <div class="stanza" data-stanza="5">
+                    <span class="stanza-number">V</span>
+                    <div class="verse-line">Desembarcando en <a class="place-link" data-place="rinihue">Riñihue</a></div>
+                    <div class="verse-line">se vio la Violeta Parra</div>
+                    <div class="verse-line">Sin cuerdas en la guitarra</div>
+                    <div class="verse-line">sin hojas en el coligüe</div>
+                    <div class="verse-line">Una banda de chirigües</div>
+                    <div class="verse-line">le vino a dar un concierto</div>
+                    <div class="verse-line">Desembarcando en <a class="place-link" data-place="rinihue">Riñihue</a></div>
+                    <div class="verse-line">se vio a la Violeta Parra</div>
+                </div>
+            </div>
+
+            <div class="poem-footer">
+                Décima n.° 58, <em>Décimas</em> (1970) · Música: Patricio Manns
+            </div>
+        </div>
+
+        <!-- Right: Info + Map -->
+        <div class="right-column">
+            <div class="info-panel">
+                <div class="spotify-row">
+                    <div id="spotify-embed"></div>
+                </div>
+
+                <div class="place-info-content">
+                    <div class="info-default" id="infoDefault">
+                        <p>Haz clic en cualquier lugar del poema para ver su ubicación y conocer su historia.</p>
+                    </div>
+
+                    <div class="place-info" id="placeInfo">
+                        <div class="place-header">
+                            <div class="place-title-row">
+                                <h3 id="placeName"></h3>
+                                <span class="fragment" id="placeFragment"></span>
+                            </div>
+                            <span class="coords" id="placeCoords"></span>
+                        </div>
+                        <div class="description" id="placeDescription"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-panel">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script is:inline src="https://open.spotify.com/embed/iframe-api/v1"></script>
+    <script is:inline>
+        var places = {
+            "los-lagos": {
+                name: "Los Lagos (Región)",
+                coords: [-41.47, -72.94],
+                fragment: "Un ojo",
+                verse: "Un ojo dejé en Los Lagos / por un descuido casual",
+                description: "Los Lagos, el distrito de los lagos de Chile, es un paisaje de aguas esmeralda acunado por volcanes nevados, donde antiguos bosques de alerce encuentran las costas brumosas de Chiloé. En los años 50 y 60, Violeta Parra viajó por estos territorios del sur recopilando canciones populares, proverbios y tradiciones de comunidades rurales. Dejar un ojo aquí es dejar parte de la propia visión en una tierra donde la memoria habita en el agua y la madera."
+            },
+            "parral": {
+                name: "Parral",
+                coords: [-36.14, -71.83],
+                fragment: "El otro ojo",
+                verse: "El otro quedó en Parral / en un boliche de tragos",
+                description: "Parral, cuna de Pablo Neruda en el corazón vinícola de Chile, es un pueblo empapado de verso y vino. El «boliche de tragos» evoca la vida precaria e itinerante de los artistas populares — Violeta y sus hermanos cantaban en tabernas y cantinas desde niños, ganando monedas para sobrevivir. En este pueblo polvoriento del Valle Central donde las viñas trepan hacia los Andes, poesía y penuria siempre compartieron la misma mesa."
+            },
+            "buin": {
+                name: "Buín",
+                coords: [-33.73, -70.74],
+                fragment: "Brazo derecho",
+                verse: "Mi brazo derecho en Buín / quedó señores oyentes",
+                description: "Buín se asienta en el valle vinícola del Maipo, 35 kilómetros al sur de Santiago — tierra agrícola fértil donde viñedos y huertos han definido la vida por generaciones. El «señores oyentes» de Violeta hace eco del trato directo de la radio, ese espacio íntimo donde una cantora habla a oyentes invisibles como si fueran amigos reunidos cerca."
+            },
+            "san-vicente": {
+                name: "San Vicente de Tagua Tagua",
+                coords: [-34.44, -71.08],
+                fragment: "Brazo izquierdo",
+                verse: "El otro por San Vicente / quedó no sé con qué fin",
+                description: "San Vicente de Tagua Tagua se levanta sobre el lecho de un antiguo lago pleistocénico donde mastodontes vagaron y los primeros cazadores del continente dejaron su huella hace más de 12.000 años. Este tranquilo pueblo agrícola en O'Higgins, rodeado de huertos de duraznos y ciruelas, preserva la memoria profunda de aguas drenadas hace milenios y una cultura huasa arraigada en el suelo fértil. Un lugar donde algo puede quedar atrás y ser recordado por milenios."
+            },
+            "curacautin": {
+                name: "Curacautín",
+                coords: [-38.43, -71.89],
+                fragment: "Pecho",
+                verse: "Mi pecho en Curacautín / lo veo en un jardincillo",
+                description: "Curacautín yace en el corazón del Wallmapu mapuche, puerta de entrada a los antiguos bosques de araucarias y los volcanes humeantes de la Araucanía. Fundado como fuerte militar en 1882 durante la ocupación chilena del territorio mapuche, el pueblo custodia el umbral entre dos grandes paisajes volcánicos — Lonquimay y Llaima. Fue en estas tierras del sur donde Violeta Parra viajó en los años 50, recopilando ülkantun (cantos tradicionales) que darían forma a su obra más profunda."
+            },
+            "maitencillo": {
+                name: "Maitencillo",
+                coords: [-32.65, -71.44],
+                fragment: "Manos",
+                verse: "Mis manos, en Maitencillo / saludan en Pelequén",
+                description: "Un pueblo costero azotado por el viento, aferrado al litoral central de Chile, donde el Pacífico frío golpea contra rocas volcánicas y arena rubia. Desde estas orillas al norte de Valparaíso, se puede alzar la mano hacia la cordillera e imaginarla alcanzando a través de la costa hacia los valles del interior — hacia lugares como Pelequén, a horas de distancia en el corazón de Chile. En el verso de Violeta, este gesto se convierte en imagen de conexión imposible: la exiliada al borde del mar, saludando hacia un hogar que no puede tocar."
+            },
+            "pelequen": {
+                name: "Pelequén",
+                coords: [-34.47, -70.92],
+                fragment: "Manos (saludan)",
+                verse: "Mis manos, en Maitencillo / saludan en Pelequén",
+                description: "Un nudo ferroviario en el Valle Central de Chile donde la línea principal norte-sur alguna vez se ramificaba hacia el oeste, hacia los lagos de Tagua Tagua. La Estación de Pelequén, inaugurada en 1862, era el tipo de lugar que Violeta conocía bien de sus años cantando en trenes y viajando a lo largo de Chile para recopilar canciones populares — un andén de llegadas y partidas, de manos que se agitan en despedida."
+            },
+            "perquilauquen": {
+                name: "Perquilauquén",
+                coords: [-35.83, -71.82],
+                fragment: "Blusa",
+                verse: "Mi blusa en Perquilauquén / recoge unos pececillos",
+                description: "Un río que serpentea por los campos de Ñuble, cerca de donde Violeta Parra pasó su infancia. Su nombre en mapudungun evoca plumas y mar. En la visión de exilio de la cantora, una blusa flota sola por la corriente, atrapando pececillos — un gesto tierno e imposible, como un fantasma ejecutando los rituales del hogar."
+            },
+            "san-rosendo": {
+                name: "San Rosendo",
+                coords: [-37.26, -72.72],
+                fragment: "Un pie",
+                verse: "Se me enredó en San Rosendo / un pie al cruzar una esquina",
+                description: "San Rosendo fue la frontera ferroviaria de Chile, el empalme desde donde partían todos los viajes hacia el sur — un pueblo de llegadas, transbordos y partidas suspendidas. En su apogeo, más de sesenta trenes pasaban semanalmente; ahora la antigua estación permanece curtida junto a su reemplazo moderno, monumento al impulso interrumpido. Tropezar aquí, con el pie atrapado en una esquina, es quedar atrapada por el peso de caminos que ya no corren."
+            },
+            "quiriquina": {
+                name: "Isla Quiriquina",
+                coords: [-36.63, -73.06],
+                fragment: "El otro pie",
+                verse: "El otro en la Quiriquina / se me hunde mares adentro",
+                description: "La Isla Quiriquina guarda la entrada a la Bahía de Concepción, una pequeña isla naval frente a Talcahuano donde la Armada de Chile ha entrenado marineros desde principios del siglo XX. En la geografía del desplazamiento de Violeta, es el único fragmento entregado por completo al océano — un pie que se hunde «mares adentro», tragado por el Pacífico. El nombre de la isla viene del mapudungun, significando «lugar de muchos zorzales», aunque sus aguas han presenciado conquistas españolas y capítulos más oscuros por venir."
+            },
+            "temuco": {
+                name: "Temuco",
+                coords: [-38.74, -72.60],
+                fragment: "Corazón",
+                verse: "Mi corazón descontento / latió con pena en Temuco",
+                description: "Capital de la Araucanía y corazón del territorio mapuche ancestral, Temuco fue fundada como fuerte militar en 1881 durante la violenta ocupación chilena de las tierras indígenas. El nombre de la ciudad proviene del mapudungun, la lengua mapuche, significando «agua de temu» por los árboles nativos sagrados. Cuando el corazón de Violeta late «con pena» aquí, reconoce siglos de despojo y resistencia — un duelo que ella conoció íntimamente a través de su trabajo documentando los cantos tradicionales mapuche en el sur."
+            },
+            "calbuco": {
+                name: "Calbuco",
+                coords: [-41.77, -73.13],
+                fragment: "Corazón (llora)",
+                verse: "Y me ha llorado en Calbuco / de frío por una escarcha",
+                description: "Calbuco — «agua azul» en mapudungun — marca el punto más austral de la fragmentación de Violeta en el poema. Este antiguo pueblo pesquero en Los Lagos se aferra al borde de un archipiélago frío, donde iglesias de madera y casas coloridas enfrentan los canales grises del Pacífico. Aquí, en el umbral de Chiloé y el sur profundo, la escarcha muerde más fuerte y la lluvia nunca cede del todo — un término adecuado para el lamento de una exiliada."
+            },
+            "chacabuco": {
+                name: "Cuesta de Chacabuco",
+                coords: [-32.97, -70.71],
+                fragment: "Marcha",
+                verse: "Voy, enderezo mi marcha / a la cuesta de Chacabuco",
+                description: "Un paso cordillerano azotado por el viento al norte de Santiago, donde los Andes comienzan a ceder. Aquí, en febrero de 1817, O'Higgins y San Martín derrotaron a los realistas españoles, y la historia oficial de Chile se forjó entre cargas de caballería y humo de cañón. Violeta endereza su marcha hacia este monumento del triunfo nacional — pero llega no como conquistadora, solo como fragmentos que regresan del exilio, del sur, hacia un centro que quizás no la reconozca."
+            },
+            "graneros": {
+                name: "Graneros",
+                coords: [-34.07, -70.73],
+                fragment: "Nervios",
+                verse: "Mis nervios dejo en Graneros",
+                description: "Graneros — «los graneros» — donde Chile almacena la cosecha de su Valle Central. En esta comuna agrícola rodeada de campos de trigo y viñedos, Violeta deja sus nervios: los filamentos crudos y expuestos del sentir que conectan cuerpo con tierra. La estrofa más visceral encuentra su hogar en un lugar construido para guardar lo que nos sustenta."
+            },
+            "san-sebastian": {
+                name: "San Sebastián (Yumbel)",
+                coords: [-37.08, -72.57],
+                fragment: "Sangre",
+                verse: "La sangre en San Sebastián",
+                description: "Yumbel, históricamente llamado San Sebastián de Yumbel — el sitio de peregrinación más sagrado del sur de Chile. El santo atravesado por flechas, su imagen de madera de cedro contrabandeada a través de guerras y escondida en campos. Violeta deja su sangre en el santuario del mártir, en las tierras fronterizas disputadas donde ella nació."
+            },
+            "chillan": {
+                name: "Chillán",
+                coords: [-36.61, -72.10],
+                fragment: "Calma",
+                verse: "Y en la ciudad de Chillán / la calma me bajó a cero",
+                description: "La capital provincial de Ñuble, Chillán fue la ciudad que Violeta Parra llamó hogar de niña, donde primero aprendió a tocar guitarra y componer. En 1939, un terremoto a medianoche arrasó casi por completo la ciudad, matando a decenas de miles. Que su calma «baje a cero» aquí sugiere la traición más profunda: ni siquiera el lugar que la formó puede darle refugio."
+            },
+            "cabrero": {
+                name: "Cabrero",
+                coords: [-37.04, -72.40],
+                fragment: "Riñones",
+                verse: "Mi riñonada en Cabrero / destruye una caminata",
+                description: "Cabrero, un pueblo ferroviario nacido a fines del siglo XIX cuando las vías del sur abrieron el interior de Chile a la colonización. Aquí, donde campos de trigo se extienden hacia el río Biobío y familias inmigrantes alguna vez se reunían alrededor de la estación, el cuerpo falla a mitad del viaje — los riñones que «destruyen una caminata» hablando del agotamiento de quienes viajaron lejos, solo para encontrar el camino súbitamente imposible de continuar."
+            },
+            "itata": {
+                name: "Valle del Itata",
+                coords: [-36.28, -72.54],
+                fragment: "Instrumento",
+                verse: "Y en una calle de Itata / se me rompió el instrumento",
+                description: "El Valle del Itata, cuyo nombre en mapudungun significa abundante pastizal, alberga los viñedos más antiguos de Chile — cepas de País y Moscatel plantadas por misioneros españoles en 1551, aún cultivadas hoy sin riego a la manera antigua. Aquí, donde el río Itata alguna vez marcaba el límite entre los pueblos mapuche y picunche, el instrumento de Violeta se rompe en una calle sin nombre. Ya sea la guitarra o su propio cuerpo lo que cedió, ella continúa — como las viejas viñas continúan, cultivadas en seco y sin injertar, extrayendo sustento de fuentes más profundas."
+            },
+            "nacimiento": {
+                name: "Nacimiento",
+                coords: [-37.50, -72.67],
+                fragment: "Guitarra (va)",
+                verse: "Y endilgó pa' Nacimiento / una mañana de plata",
+                description: "Nacimiento — «Natividad» — se levanta donde el Vergara encuentra el Biobío, un pueblo nacido como fuerte español en Nochebuena de 1603, en el mismo borde del territorio mapuche. Su nombre significa «nacimiento» — y así la guitarra rota, abandonada por su dueña, se dirige hacia un lugar de comienzos, cruzando hacia las tierras ancestrales que resistieron la conquista por tres siglos. En el verso de Violeta, este viaje ocurre en una «mañana de plata», como si el instrumento se disolviera en mito, vagando hacia los bosques brumosos del sur donde la memoria y la resistencia aún viven en la tierra misma."
+            },
+            "rinihue": {
+                name: "Lago Riñihue",
+                coords: [-39.83, -72.32],
+                fragment: "Violeta entera",
+                verse: "Desembarcando en Riñihue / se vio la Violeta Parra",
+                description: "Lago glaciar en Los Ríos, el último de la cadena de los Siete Lagos. En 1960, tras el terremoto más grande jamás registrado, derrumbes bloquearon su desagüe y el agua comenzó a subir, amenazando con borrar Valdivia del mapa. En el Riñihuazo, cientos de hombres cavaron con palas contra el tiempo — la tierra herida, resistiendo. Aquí desembarca Violeta al final: sin guitarra, sin hojas en el coligüe, despojada de todo salvo su nombre. Los chirigües — pájaros humildes del sur — le ofrecen el último concierto."
+            }
+        };
+
+        // Place timings in milliseconds - [timestamp, placeKey, stanzaNumber]
+        var placeTimings = [
+            // Estrofa 1
+            [28000, 'los-lagos', 1],
+            [33000, 'parral', 1],
+            // Estrofa 2
+            [54000, 'buin', 2],
+            [58000, 'san-vicente', 2],
+            [64000, 'curacautin', 2],
+            [70000, 'maitencillo', 2],
+            [73000, 'pelequen', 2],
+            [76000, 'perquilauquen', 2],
+            // Estrofa 3
+            [90000, 'san-rosendo', 3],
+            [96000, 'quiriquina', 3],
+            [104000, 'temuco', 3],
+            [108000, 'calbuco', 3],
+            [115000, 'chacabuco', 3],
+            // Estrofa 4
+            [118000, 'graneros', 4],
+            [120000, 'san-sebastian', 4],
+            [123000, 'chillan', 4],
+            [129000, 'cabrero', 4],
+            [134000, 'itata', 4],
+            [140000, 'nacimiento', 4],
+            // Estrofa 5
+            [150000, 'rinihue', 5],
+            [181000, 'rinihue', 5],
+            [191000, 'rinihue', 5]
+        ];
+
+        var map = null;
+        var markers = {};
+        var embedController = null;
+        var currentPlaceIndex = -1;
+        var currentStanza = null;
+        var isUserInteracting = false;
+
+        // Spotify iFrame API
+        window.onSpotifyIframeApiReady = function(IFrameAPI) {
+            var element = document.getElementById('spotify-embed');
+            var options = {
+                uri: 'spotify:track:7irxnofTcigmaOxY0TBTkr',
+                width: '100%',
+                height: 80
+            };
+            IFrameAPI.createController(element, options, function(controller) {
+                embedController = controller;
+
+                controller.addListener('playback_update', function(e) {
+                    var position = e.data.position;
+                    updatePlaybackPosition(position);
+                });
+            });
+        };
+
+        function updatePlaybackPosition(positionMs) {
+            // Find current place based on position
+            var newPlaceIndex = -1;
+            for (var i = placeTimings.length - 1; i >= 0; i--) {
+                if (positionMs >= placeTimings[i][0]) {
+                    newPlaceIndex = i;
+                    break;
+                }
+            }
+
+            // Update place if changed
+            if (newPlaceIndex !== currentPlaceIndex && newPlaceIndex >= 0) {
+                currentPlaceIndex = newPlaceIndex;
+                var placeKey = placeTimings[newPlaceIndex][1];
+                var stanzaNum = placeTimings[newPlaceIndex][2];
+
+                // Show place on map (smooth animation)
+                showPlaceSmooth(placeKey);
+
+                // Update stanza highlighting
+                if (stanzaNum !== currentStanza) {
+                    currentStanza = stanzaNum;
+                    document.querySelectorAll('.stanza').forEach(function(el) {
+                        el.classList.remove('playing');
+                        if (el.dataset.stanza == stanzaNum) {
+                            el.classList.add('playing');
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                }
+            }
+        }
+
+        function showPlaceSmooth(key) {
+            var place = places[key];
+            if (!place) return;
+
+            // Update info panel
+            document.getElementById('infoDefault').style.display = 'none';
+            document.getElementById('placeInfo').classList.add('visible');
+            document.getElementById('placeName').textContent = place.name;
+            document.getElementById('placeFragment').textContent = '— ' + place.fragment;
+            document.getElementById('placeDescription').textContent = place.description;
+            document.getElementById('placeCoords').textContent = place.coords[0].toFixed(2) + '°S, ' + Math.abs(place.coords[1]).toFixed(2) + '°W';
+
+            // Update poem highlights
+            document.querySelectorAll('.place-link').forEach(function(el) {
+                el.classList.remove('active');
+                if (el.dataset.place === key) {
+                    el.classList.add('active');
+                }
+            });
+
+            // Smooth map animation
+            if (map) {
+                map.flyTo(place.coords, 9, {
+                    animate: true,
+                    duration: 1.5
+                });
+
+                // Update marker highlights
+                Object.keys(markers).forEach(function(k) {
+                    var el = markers[k].getElement();
+                    if (el) {
+                        var dot = el.querySelector('.marker-dot');
+                        if (dot) {
+                            if (k === key) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function initMap() {
+            try {
+                map = L.map('map', {
+                    center: [-37.5, -72.0],
+                    zoom: 6,
+                    zoomControl: true
+                });
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OSM © CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 12
+                }).addTo(map);
+
+                // Markers only (no trajectory)
+                Object.keys(places).forEach(function(key) {
+                    var place = places[key];
+                    var isFinal = key === 'rinihue';
+                    var size = isFinal ? 18 : 14;
+
+                    var bgColor = isFinal ? '#b8860b' : '#722f37';
+                    var icon = L.divIcon({
+                        className: 'custom-marker-wrapper',
+                        iconSize: [size, size],
+                        iconAnchor: [size/2, size/2],
+                        html: '<div class="marker-dot' + (isFinal ? ' final' : '') + '" style="width:' + size + 'px;height:' + size + 'px;background:' + bgColor + ';border:3px solid #f6f3ea;border-radius:50%;box-sizing:border-box;"></div>'
+                    });
+
+                    var marker = L.marker(place.coords, { icon: icon }).addTo(map);
+                    marker.on('click', function() {
+                        showPlace(key);
+                    });
+
+                    // Add tooltip with place name
+                    marker.bindTooltip(place.name, {
+                        permanent: false,
+                        direction: 'top',
+                        className: 'place-tooltip',
+                        offset: [0, -8]
+                    });
+
+                    markers[key] = marker;
+                });
+
+                // Fit bounds to all markers with tighter framing
+                var allCoords = Object.values(places).map(function(p) { return p.coords; });
+                var bounds = L.latLngBounds(allCoords);
+                map.fitBounds(bounds, { padding: [20, 20] });
+            } catch(e) {
+                console.log('Map init failed:', e);
+                document.getElementById('map').innerHTML = '<div style="padding: 40px; text-align: center; color: #5c4a3d; font-style: italic;">Mapa no disponible en este visor.<br><br>Descarga el archivo y ábrelo<br>en un navegador para ver el mapa.</div>';
+            }
+        }
+
+        function showPlace(key) {
+            var place = places[key];
+            if (!place) return;
+
+            // Update info panel
+            document.getElementById('infoDefault').style.display = 'none';
+            document.getElementById('placeInfo').classList.add('visible');
+            document.getElementById('placeName').textContent = place.name;
+            document.getElementById('placeFragment').textContent = '— ' + place.fragment;
+            document.getElementById('placeDescription').textContent = place.description;
+            document.getElementById('placeCoords').textContent = place.coords[0].toFixed(2) + '°S, ' + Math.abs(place.coords[1]).toFixed(2) + '°W';
+
+            // Update poem highlights
+            document.querySelectorAll('.place-link').forEach(function(el) {
+                el.classList.remove('active');
+                if (el.dataset.place === key) {
+                    el.classList.add('active');
+                }
+            });
+
+            // Update map
+            if (map) {
+                map.setView(place.coords, 9, { animate: true, duration: 0.5 });
+
+                Object.keys(markers).forEach(function(k) {
+                    var el = markers[k].getElement();
+                    if (el) {
+                        var dot = el.querySelector('.marker-dot');
+                        if (dot) {
+                            if (k === key) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Event listeners
+        document.querySelectorAll('.place-link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPlace(this.dataset.place);
+            });
+        });
+
+        // Init map
+        if (typeof L !== 'undefined') {
+            initMap();
+        } else {
+            document.getElementById('map').innerHTML = '<div style="padding: 40px; text-align: center; color: #5c4a3d; font-style: italic;">Mapa no disponible.<br>Abre en navegador local.</div>';
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --parchment: #f6f3ea;
+            --parchment-dark: #ebe7dc;
+            --ink: #2c2416;
+            --ink-light: #4a3f2f;
+            --rust: #8b4513;
+            --earth: #5c4a3d;
+            --blood: #722f37;
+            --gold: #b8860b;
+            --sea: #d4dfe3;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--parchment);
+            color: var(--ink);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main layout: two columns */
+        .main-container {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            height: 100vh;
+        }
+
+        /* Left column: Poem */
+        .poem-column {
+            background: var(--parchment);
+            border-right: 1px solid rgba(44, 36, 22, 0.15);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .poem-header {
+            padding: 1.25rem 1.25rem 1rem;
+            border-bottom: 1px solid rgba(44, 36, 22, 0.12);
+            background: linear-gradient(to bottom, var(--parchment), var(--parchment-dark));
+        }
+
+        .poem-header h1 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.1rem;
+        }
+
+        .poem-header .subtitle {
+            font-size: 0.95rem;
+            color: var(--earth);
+            font-style: italic;
+            display: inline;
+        }
+
+        .poem-header .year {
+            font-size: 0.85rem;
+            color: var(--earth);
+            opacity: 0.7;
+            margin-left: 0.3rem;
+        }
+
+        .poem-header .info-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--earth);
+            border: 1px solid var(--earth);
+            border-radius: 50%;
+            margin-left: 0.4rem;
+            cursor: help;
+            position: relative;
+            vertical-align: middle;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .poem-header .info-icon:hover {
+            opacity: 1;
+        }
+
+        .poem-header .info-icon:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .poem-header .tooltip {
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            margin-top: 8px;
+            background: var(--ink);
+            color: var(--parchment);
+            padding: 0.6rem 0.8rem;
+            border-radius: 3px;
+            font-size: 0.78rem;
+            font-style: normal;
+            line-height: 1.4;
+            width: 220px;
+            text-align: left;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+        }
+
+        .poem-header .tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-bottom-color: var(--ink);
+        }
+
+        .poem-content {
+            flex: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        .stanza {
+            margin-bottom: 1.25rem;
+            padding: 0.8rem 0.5rem 0.8rem 1.8rem;
+            position: relative;
+            border-left: 2px solid rgba(139, 69, 19, 0.15);
+            transition: all 0.3s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .stanza:hover {
+            border-left-color: rgba(139, 69, 19, 0.35);
+        }
+
+        .stanza.playing {
+            border-left-color: var(--gold);
+            border-left-width: 3px;
+            background: linear-gradient(to right, rgba(184, 134, 11, 0.08), transparent);
+        }
+
+        .stanza.playing .stanza-number {
+            background: var(--gold);
+            transform: scale(1.1);
+        }
+
+        .stanza:last-child {
+            margin-bottom: 0.5rem;
+        }
+
+        .stanza-number {
+            position: absolute;
+            left: -1.2rem;
+            top: 0.8rem;
+            font-size: 0.8rem;
+            color: var(--parchment);
+            background: var(--rust);
+            width: 1.4rem;
+            height: 1.4rem;
+            line-height: 1.4rem;
+            text-align: center;
+            border-radius: 50%;
+            font-style: normal;
+            transition: all 0.3s ease;
+        }
+
+        .verse-line {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .place-link {
+            color: var(--blood);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--blood);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .place-link:hover {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .place-link.active {
+            color: var(--gold);
+            border-bottom: 2px solid var(--gold);
+            font-weight: 500;
+        }
+
+        .poem-footer {
+            padding: 0.75rem 1.25rem;
+            border-top: 1px solid rgba(44, 36, 22, 0.1);
+            font-size: 0.75rem;
+            color: var(--earth);
+            background: var(--parchment-dark);
+        }
+
+        .poem-footer a {
+            color: var(--blood);
+        }
+
+        /* Right column: Info + Map */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: var(--parchment-dark);
+        }
+
+        /* Info panel (top 1/3) */
+        .info-panel {
+            flex: 0 0 33%;
+            border-bottom: 1px solid rgba(44, 36, 22, 0.15);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .spotify-row {
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.03);
+            border-bottom: 1px solid rgba(44, 36, 22, 0.08);
+        }
+
+        .spotify-row iframe {
+            border-radius: 8px;
+        }
+
+        .place-info-content {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            overflow-y: auto;
+        }
+
+        .info-default {
+            color: var(--earth);
+            font-style: italic;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-default p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .place-info {
+            display: none;
+        }
+
+        .place-info.visible {
+            display: block;
+        }
+
+        .place-info .place-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .place-info .place-title-row {
+            display: flex;
+            align-items: baseline;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .place-info h3 {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin: 0;
+            color: var(--ink);
+        }
+
+        .place-info .fragment {
+            font-style: italic;
+            color: var(--blood);
+            font-size: 0.85rem;
+        }
+
+        .place-info .coords {
+            font-size: 0.7rem;
+            color: var(--earth);
+            opacity: 0.7;
+            white-space: nowrap;
+            margin-left: 0.5rem;
+        }
+
+        .place-info .description {
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            line-height: 1.5;
+            font-family: 'Source Serif 4', Georgia, serif;
+        }
+
+        /* Map (bottom 2/3) */
+        .map-panel {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            background: var(--sea);
+        }
+
+        /* Leaflet customizations */
+        .leaflet-container {
+            background: var(--sea);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
+
+        :global(.custom-marker-wrapper) {
+            background: transparent !important;
+            border: none !important;
+        }
+
+        :global(.marker-dot) {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 1px rgba(114, 47, 55, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        :global(.marker-dot:hover) {
+            transform: scale(1.2);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(114, 47, 55, 0.4);
+        }
+
+        :global(.marker-dot.active) {
+            background: #b8860b !important;
+            border-color: #fff !important;
+            transform: scale(1.4);
+            box-shadow: 0 4px 16px rgba(184, 134, 11, 0.6), 0 0 0 2px rgba(184, 134, 11, 0.3);
+        }
+
+        :global(.marker-dot.final) {
+            box-shadow: 0 2px 8px rgba(184, 134, 11, 0.5), 0 0 0 1px rgba(184, 134, 11, 0.3);
+        }
+
+        :global(.place-tooltip) {
+            background: #2c2416;
+            color: #f6f3ea;
+            border: none;
+            border-radius: 3px;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        :global(.place-tooltip::before) {
+            border-top-color: #2c2416;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: var(--parchment);
+            border-radius: 2px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.2);
+        }
+
+        .leaflet-popup-content {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            margin: 10px 14px;
+            font-size: 0.95rem;
+        }
+
+        .leaflet-popup-tip {
+            background: var(--parchment);
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            body {
+                overflow: auto;
+                height: auto;
+            }
+
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+                height: auto;
+            }
+
+            .poem-column {
+                border-right: none;
+                border-bottom: 1px solid rgba(44, 36, 22, 0.15);
+                max-height: 50vh;
+            }
+
+            .right-column {
+                height: 60vh;
+            }
+
+            .info-panel {
+                flex: 0 0 40%;
+            }
+        }
+    </style>
+</body>
+</html>
