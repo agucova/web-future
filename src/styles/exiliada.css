@@ -15,7 +15,7 @@
 
   /* Fonts */
   --font-cormorant: 'Cormorant Garamond', Georgia, serif;
-  --font-source-serif: 'Source Serif 4', Georgia, serif;
+  --font-source-serif: 'Source Serif 4', 'Iowan Old Style', Cambria, Georgia, serif;
 
   /* Mobile breakpoint at 800px */
   --breakpoint-md: 800px;

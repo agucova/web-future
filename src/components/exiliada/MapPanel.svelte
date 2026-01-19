@@ -329,7 +329,26 @@
     background: var(--color-parchment);
   }
 
+  /* Attribution styling - make it less prominent */
+  :global(.leaflet-control-attribution) {
+    background: rgba(246, 243, 234, 0.8) !important;
+    font-size: 0.65rem !important;
+    opacity: 0.7 !important;
+    padding: 2px 5px !important;
+    line-height: 1.3 !important;
+  }
+
+  :global(.leaflet-control-attribution a) {
+    color: var(--color-earth) !important;
+  }
+
   @media (max-width: 800px) {
+    /* Even smaller attribution on mobile */
+    :global(.leaflet-control-attribution) {
+      font-size: 0.5rem !important;
+      padding: 1px 3px !important;
+      opacity: 0.6 !important;
+    }
     .map-panel {
       grid-column: unset;
       grid-row: unset;

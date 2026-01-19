@@ -79,7 +79,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 680px;
+    max-width: 710px;
     width: 90vw;
     max-height: 85vh;
     background: var(--color-parchment);

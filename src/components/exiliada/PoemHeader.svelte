@@ -1,20 +1,38 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { uiState, openInfoSheet } from "$lib/exiliada/state.svelte";
 
+    let shouldPulse = $state(false);
+
+    onMount(() => {
+        // Check if user has opened the info sheet before
+        const hasSeenInfo = localStorage.getItem('exiliada-info-seen');
+        if (!hasSeenInfo) {
+            shouldPulse = true;
+        }
+    });
+
     function handleInfoClick() {
+        // Mark as seen on first click
+        localStorage.setItem('exiliada-info-seen', 'true');
+        shouldPulse = false;
         openInfoSheet();
     }
 </script>
 
 <div class="poem-header">
-    <h1>La Exiliada del Sur</h1>
+    <div class="header-row">
+        <h1>La Exiliada del Sur</h1>
+        <button
+            class="info-icon"
+            class:pulse={shouldPulse}
+            aria-label="Abrir información sobre este poema"
+            title="Sobre este poema"
+            onclick={handleInfoClick}>?</button
+        >
+    </div>
     <span class="subtitle">Violeta Parra</span>
     <span class="year">(c. 1958)</span>
-    <button
-        class="info-icon"
-        aria-label="Información sobre el poema"
-        onclick={handleInfoClick}>i</button
-    >
 </div>
 
 <style>
@@ -29,6 +47,14 @@
             var(--color-parchment),
             var(--color-parchment-dark)
         );
+        position: relative;
+    }
+
+    .header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
     }
 
     .poem-header h1 {
@@ -56,23 +82,21 @@
     }
 
     .info-icon {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        line-height: 16px;
-        text-align: center;
-        font-size: 0.7rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        font-size: 1rem;
         color: var(--color-earth);
-        border: 1px solid var(--color-earth);
+        border: 1.5px solid var(--color-earth);
         border-radius: 50%;
-        margin-left: 0.4rem;
         cursor: pointer;
-        position: relative;
-        vertical-align: middle;
-        opacity: 0.6;
+        opacity: 0.7;
         transition: all 0.2s ease;
         background: transparent;
         padding: 0;
+        flex-shrink: 0;
     }
 
     .info-icon:hover {
@@ -83,6 +107,26 @@
 
     .info-icon:active {
         transform: scale(0.95);
+    }
+
+    /* Subtle pulse animation - only for first-time visitors */
+    .info-icon.pulse {
+        animation: subtle-pulse 2.5s ease-in-out infinite;
+    }
+
+    .info-icon.pulse:hover {
+        animation: none;
+    }
+
+    @keyframes subtle-pulse {
+        0%, 100% {
+            opacity: 0.5;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
     }
 
     @media (max-width: 800px) {
@@ -99,8 +143,12 @@
         }
 
         .info-icon {
-            cursor: pointer;
             opacity: 0.8;
+            width: 26px;
+            height: 26px;
+            font-size: 1.05rem;
+            /* Increase tap target to at least 44x44px for mobile accessibility */
+            padding: 9px;
         }
     }
 </style>

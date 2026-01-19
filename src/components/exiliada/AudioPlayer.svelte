@@ -126,9 +126,13 @@
         <ProgressBar />
 
         <div class="time-display">
-            <span>{formatTime(playbackState.currentTime)}</span>
+            <span class="current-time"
+                >{formatTime(playbackState.currentTime)}</span
+            >
             <span class="time-separator">/</span>
-            <span>{formatTime(playbackState.duration)}</span>
+            <span class="duration-time"
+                >{formatTime(playbackState.duration)}</span
+            >
         </div>
     </div>
 </div>
@@ -186,7 +190,8 @@
     }
 
     .play-icon {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family:
+            -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         font-size: 0.7rem;
         margin-left: 2px;
         margin-top: 1px;
@@ -195,7 +200,8 @@
 
     .pause-icon {
         display: none;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family:
+            -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         font-size: 0.65rem;
         letter-spacing: 1px;
     }
@@ -240,8 +246,8 @@
     }
 
     .track-artist {
-        font-family: var(--font-cormorant);
-        font-size: 0.85rem;
+        font-family: var(--font-source-serif);
+        font-size: 0.75rem;
         color: var(--color-earth);
         white-space: nowrap;
     }
@@ -254,6 +260,14 @@
         flex-shrink: 0;
         min-width: 70px;
         text-align: right;
+    }
+
+    .current-time {
+        font-weight: 600;
+    }
+
+    .duration-time {
+        opacity: 0.7;
     }
 
     .time-separator {
