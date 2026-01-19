@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Map pin - the journey through Chile -->
+  <path d="M16 2 C10 2 5 7 5 13 C5 21 16 30 16 30 C16 30 27 21 27 13 C27 7 22 2 16 2 Z" fill="#722f37"/>
+  <circle cx="16" cy="12" r="5" fill="#f6f3ea"/>
+</svg>

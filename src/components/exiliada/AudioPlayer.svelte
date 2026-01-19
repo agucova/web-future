@@ -8,6 +8,7 @@
         setCurrentTime,
         setDuration,
         togglePlayback,
+        openInfoSheet,
     } from "$lib/exiliada/state.svelte";
     import { formatTime, throttle } from "$lib/exiliada/utils";
 
@@ -70,6 +71,8 @@
         const handleEnded = () => {
             setPlaying(false);
             setCurrentTime(0);
+            // Gentle "credits" - open info sheet after song ends
+            openInfoSheet();
         };
 
         // Check if metadata is already loaded
