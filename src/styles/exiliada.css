@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+/* Exiliada del Sur - Custom Theme */
+@theme {
+  /* Colors */
+  --color-parchment: #f6f3ea;
+  --color-parchment-dark: #ebe7dc;
+  --color-ink: #2c2416;
+  --color-ink-light: #4a3f2f;
+  --color-rust: #8b4513;
+  --color-earth: #5c4a3d;
+  --color-blood: #722f37;
+  --color-gold: #b8860b;
+  --color-sea: #d4dfe3;
+
+  /* Fonts */
+  --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+  --font-source-serif: 'Source Serif 4', Georgia, serif;
+
+  /* Mobile breakpoint at 800px */
+  --breakpoint-md: 800px;
+}
+
+/* Base styles for the Exiliada page */
+.exiliada-base {
+  font-family: var(--font-cormorant);
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  line-height: 1.6;
+}
