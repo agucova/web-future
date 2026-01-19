@@ -161,6 +161,22 @@ export const places: Record<string, Place> = {
     description:
       "<a href=\"https://es.wikipedia.org/wiki/Lago_Riñihue\" target=\"_blank\" rel=\"noopener noreferrer\">Lago glaciar</a> en Los Ríos, el último de los <a href=\"https://es.wikipedia.org/wiki/Siete_Lagos_(Chile)\" target=\"_blank\" rel=\"noopener noreferrer\">Siete Lagos</a>. Su nombre en mapudungun significa «lugar de coligües» — las cañas de bambú del sur — conectando con el verso donde Violeta llega «sin hojas en el coligüe». En 1960, después del <a href=\"https://es.wikipedia.org/wiki/Terremoto_de_Valdivia_de_1960\" target=\"_blank\" rel=\"noopener noreferrer\">terremoto más grande registrado en la historia</a>, derrumbes bloquearon el desagüe del lago y el agua empezó a subir, amenazando con inundar Valdivia. Cientos de trabajadores cavaron con palas durante semanas para evitar la catástrofe — el <a href=\"https://es.wikipedia.org/wiki/Riñihuazo\" target=\"_blank\" rel=\"noopener noreferrer\">Riñihuazo</a>, lo llamaron. Aquí desembarca Violeta al final: sin guitarra, sin hojas en la caña, despojada de todo menos su nombre. Los chirigües — pájaros humildes del sur — le dan el último concierto.",
   },
+  "rinihue-2": {
+    name: "Lago Riñihue",
+    coords: [-39.83, -72.32],
+    fragment: "Violeta entera",
+    verse: "Desembarcando en Riñihue / se vio la Violeta Parra",
+    description:
+      "<a href=\"https://es.wikipedia.org/wiki/Lago_Riñihue\" target=\"_blank\" rel=\"noopener noreferrer\">Lago glaciar</a> en Los Ríos, el último de los <a href=\"https://es.wikipedia.org/wiki/Siete_Lagos_(Chile)\" target=\"_blank\" rel=\"noopener noreferrer\">Siete Lagos</a>. Su nombre en mapudungun significa «lugar de coligües» — las cañas de bambú del sur — conectando con el verso donde Violeta llega «sin hojas en el coligüe». En 1960, después del <a href=\"https://es.wikipedia.org/wiki/Terremoto_de_Valdivia_de_1960\" target=\"_blank\" rel=\"noopener noreferrer\">terremoto más grande registrado en la historia</a>, derrumbes bloquearon el desagüe del lago y el agua empezó a subir, amenazando con inundar Valdivia. Cientos de trabajadores cavaron con palas durante semanas para evitar la catástrofe — el <a href=\"https://es.wikipedia.org/wiki/Riñihuazo\" target=\"_blank\" rel=\"noopener noreferrer\">Riñihuazo</a>, lo llamaron. Aquí desembarca Violeta al final: sin guitarra, sin hojas en la caña, despojada de todo menos su nombre. Los chirigües — pájaros humildes del sur — le dan el último concierto.",
+  },
+  "rinihue-3": {
+    name: "Lago Riñihue",
+    coords: [-39.83, -72.32],
+    fragment: "Violeta entera",
+    verse: "Desembarcando en Riñihue / se vio la Violeta Parra",
+    description:
+      "<a href=\"https://es.wikipedia.org/wiki/Lago_Riñihue\" target=\"_blank\" rel=\"noopener noreferrer\">Lago glaciar</a> en Los Ríos, el último de los <a href=\"https://es.wikipedia.org/wiki/Siete_Lagos_(Chile)\" target=\"_blank\" rel=\"noopener noreferrer\">Siete Lagos</a>. Su nombre en mapudungun significa «lugar de coligües» — las cañas de bambú del sur — conectando con el verso donde Violeta llega «sin hojas en el coligüe». En 1960, después del <a href=\"https://es.wikipedia.org/wiki/Terremoto_de_Valdivia_de_1960\" target=\"_blank\" rel=\"noopener noreferrer\">terremoto más grande registrado en la historia</a>, derrumbes bloquearon el desagüe del lago y el agua empezó a subir, amenazando con inundar Valdivia. Cientos de trabajadores cavaron con palas durante semanas para evitar la catástrofe — el <a href=\"https://es.wikipedia.org/wiki/Riñihuazo\" target=\"_blank\" rel=\"noopener noreferrer\">Riñihuazo</a>, lo llamaron. Aquí desembarca Violeta al final: sin guitarra, sin hojas en la caña, despojada de todo menos su nombre. Los chirigües — pájaros humildes del sur — le dan el último concierto.",
+  },
 };
 
 export const wordDefinitions: Record<string, WordDefinition> = {
@@ -207,32 +223,40 @@ export const wordDefinitions: Record<string, WordDefinition> = {
 // Place timings in milliseconds - [timestamp, placeKey, stanzaNumber]
 export const placeTimings: PlaceTiming[] = [
   // Estrofa 1
-  [27200, "los-lagos", 1],
-  [33000, "parral", 1],
+  [26900, "los-lagos", 1],
+  [32800, "parral", 1],
   // Estrofa 2
   [54000, "buin", 2],
-  [58000, "san-vicente", 2],
+  [58350, "san-vicente", 2],
   [64000, "curacautin", 2],
-  [70000, "maitencillo", 2],
+  [69800, "maitencillo", 2],
   [73000, "pelequen", 2],
-  [76000, "perquilauquen", 2],
-  // Estrofa 3
-  [90000, "san-rosendo", 3],
-  [96000, "quiriquina", 3],
-  [104000, "temuco", 3],
-  [108000, "calbuco", 3],
-  [115000, "chacabuco", 3],
-  // Estrofa 4
-  [118000, "graneros", 4],
-  [120000, "san-sebastian", 4],
-  [123000, "chillan", 4],
-  [129000, "cabrero", 4],
-  [134000, "itata", 4],
-  [140000, "nacimiento", 4],
-  // Estrofa 5
-  [150000, "rinihue", 5],
-  [181000, "rinihue", 5],
-  [191000, "rinihue", 5],
+  [75850, "perquilauquen", 2],
+  // Estrofa 3 (long stanza with many places)
+  [91400, "san-rosendo", 3],
+  [96700, "quiriquina", 3],
+  [105800, "temuco", 3],
+  [108700, "calbuco", 3],
+  [116300, "chacabuco", 3],
+  [118700, "graneros", 3],
+  [120750, "san-sebastian", 3],
+  [124000, "chillan", 3],
+  [129800, "cabrero", 3],
+  [135800, "itata", 3],
+  [140800, "nacimiento", 3],
+  // Estrofa 4 (final stanza, only riñihue)
+  [151500, "rinihue", 4],
+  [188000, "rinihue-2", 4],
+  [199700, "rinihue-3", 4],
+
+];
+
+// Stanza start times (for highlighting stanzas when they begin, not when first place is mentioned)
+export const stanzaStartTimes: [number, number][] = [
+  [25000, 1], // Estrofa 1 starts at 0:25
+  [52500, 2], // Estrofa 2 starts at 0:52.5
+  [90000, 3], // Estrofa 3 starts at 1:30
+  [149000, 4], // Estrofa 4 starts at 2:28
 ];
 
 // Info sheet content
@@ -293,11 +317,6 @@ export const stanzas = [
       { text: "de frío por una escarcha" },
       { text: "Voy, enderezo mi marcha" },
       { text: "a la cuesta de ", place: "chacabuco", placeText: "Chacabuco" },
-    ],
-  },
-  {
-    number: 4,
-    lines: [
       { text: "Mis nervios dejo en ", place: "graneros", placeText: "Graneros" },
       { text: "la sangre en ", place: "san-sebastian", placeText: "San Sebastián" },
       { text: "Y en la ciudad de ", place: "chillan", placeText: "Chillán" },
@@ -311,7 +330,7 @@ export const stanzas = [
     ],
   },
   {
-    number: 5,
+    number: 4,
     lines: [
       { text: "Desembarcando en ", place: "rinihue", placeText: "Riñihue" },
       { text: "se vio la Violeta Parra" },
@@ -319,7 +338,9 @@ export const stanzas = [
       { text: "sin hojas en el ", word: "coligue", wordText: "coligüe" },
       { text: "Una banda de ", word: "chirigues", wordText: "chirigües" },
       { text: "le vino a dar un concierto" },
-      { text: "Desembarcando en ", place: "rinihue", placeText: "Riñihue" },
+      { text: "Desembarcando en ", place: "rinihue-2", placeText: "Riñihue" },
+      { text: "se vio a la Violeta Parra" },
+      { text: "Desembarcando en ", place: "rinihue-3", placeText: "Riñihue" },
       { text: "se vio a la Violeta Parra" },
     ],
   },

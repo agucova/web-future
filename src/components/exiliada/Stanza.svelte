@@ -25,7 +25,7 @@
   let { number, lines, onShowPlace, wordImageUrls }: Props = $props();
 
   // Roman numerals for stanza numbers
-  const romanNumerals = ['I', 'II', 'III', 'IV', 'V'];
+  const romanNumerals = ['I', 'II', 'III', 'IV'];
 
   let isPlaying = $derived(navigationState.currentStanza === number);
 </script>

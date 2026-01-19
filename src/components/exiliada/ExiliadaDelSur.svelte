@@ -9,7 +9,7 @@
   import PlaceSidebar from './PlaceSidebar.svelte';
   import BottomSheetManager from './BottomSheet/Manager.svelte';
   import ImageLightbox from './ImageLightbox.svelte';
-  import { places, placeTimings } from '$lib/exiliada/data';
+  import { places, placeTimings, stanzaStartTimes } from '$lib/exiliada/data';
   import {
     navigationState,
     uiState,
@@ -46,36 +46,48 @@
 
   // Handle playback time updates to sync places and stanzas
   function handleTimeUpdate(positionMs: number) {
+    // Only auto-sync if user isn't manually interacting
+    if (navigationState.isUserInteracting) return;
+
+    // Find current stanza based on stanza start times
+    let currentStanza = null;
+    for (let i = stanzaStartTimes.length - 1; i >= 0; i--) {
+      if (positionMs >= stanzaStartTimes[i][0]) {
+        currentStanza = stanzaStartTimes[i][1];
+        break;
+      }
+    }
+
     // Find current place based on position
     let newPlaceIndex = -1;
+    let currentPlaceKey = null;
     for (let i = placeTimings.length - 1; i >= 0; i--) {
       if (positionMs >= placeTimings[i][0]) {
         newPlaceIndex = i;
+        currentPlaceKey = placeTimings[i][1];
         break;
+      }
+    }
+
+    // Update stanza if changed (independent of place)
+    const prevStanza = navigationState.currentStanza;
+    if (currentStanza !== null && currentStanza !== prevStanza) {
+      setCurrentStanza(currentStanza);
+
+      // Auto-scroll stanza into view when it changes
+      const stanzaEl = document.querySelector(`[data-stanza="${currentStanza}"]`);
+      if (stanzaEl) {
+        stanzaEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
       }
     }
 
     // Update place if changed
     if (newPlaceIndex !== navigationState.currentPlaceIndex && newPlaceIndex >= 0) {
       navigationState.currentPlaceIndex = newPlaceIndex;
-      const [, placeKey, stanzaNum] = placeTimings[newPlaceIndex];
-
-      // Only auto-sync if user isn't manually interacting
-      if (!navigationState.isUserInteracting) {
-        const prevStanza = navigationState.currentStanza;
-        setCurrentPlace(placeKey, stanzaNum);
-
-        // Auto-scroll stanza into view (check BEFORE we update stanza)
-        if (stanzaNum !== prevStanza) {
-          const stanzaEl = document.querySelector(`[data-stanza="${stanzaNum}"]`);
-          if (stanzaEl) {
-            stanzaEl.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
-            });
-          }
-        }
-      }
+      setCurrentPlace(currentPlaceKey);
     }
   }
 
