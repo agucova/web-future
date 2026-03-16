@@ -3,10 +3,8 @@ layout: '../layouts/Layout.astro'
 title: "What I'm currently up to"
 description: "⏰ A list of the things I'm currently doing, updated periodically."
 ---
-
 # What I'm currently up to
-
-**Last updated:** November 2025
+**Last updated:** March 2026
 
 ## What is this page?
 This page is a list of the things I'm currently doing, following the format laid out by the [/now](https://nownownow.com/about) movement.
@@ -17,17 +15,20 @@ This page has a dual purpose:
 
 ## 🎯 Building Kairos
 
-I'm Co-Director of [Kairos](https://kairos-project.org/), an AI safety fieldbuilding organization that's focused on supporting talent to work on risks from advanced AI. I've been doing this for a year and a half, and I think we've gotten very good at it.
+I'm Co-Director and CEO of [Kairos](https://kairos-project.org/), an AI safety fieldbuilding organization focused on supporting talent to work on risks from advanced AI. We spun off from CEA in mid-2024 and have been growing fast since.
 
-We're currently:
-- **Running [SPAR Fall 2025](https://sparai.org):** A part-time, remote research program hosting 86 projects pairing 314 mentees with 78 mentors over 3 months. As of recently, we became the biggest AI safety research program in the world!
-- **Running [Pathfinder Fall 2025](https://pathfinder.kairos-project.org):** A program supporting 65 AI safety university group organizers with ~30 mentors
-- **Scoping out new projects:** Evaluating new projects that Kairos could take on
+Some of the things I'm focusing on:
+- **Running [SPAR Spring 2026](https://sparai.org):** 136 projects pairing 400+ mentees with 120+ mentors. This is the largest round of any AI safety research fellowship to date.
+- **Scaling the team:** We're growing from 4 people to 8+, hiring across generalist, operations, and director roles.
+- **Rewriting our internal stack:** Migrating all of Kairos's internal tooling to a monorepo built on [Convex](https://convex.dev/), replacing a patchwork of Airtable bases and scripts.
 
-## 🏛️ Organizing Fhe Field Work Forum
+## 🔐 Side projects
 
-I'm helping organize the [Field Work Forum](https://fieldworkforum.org/) in SF, February 12–13, 2026. It's a cross-disciplinary workshop on building scientific research fields, bringing together people working on fieldbuilding across different domains.
+I have a couple of Rust projects I work on when I have time:
 
-## 📚 Still studying
+- **[Tacet](https://tacet.sh):** A Bayesian timing side-channel detection library. It uses principled uncertainty quantification to produce three-way verdicts (pass/fail/inconclusive) instead of forcing binary decisions under noisy conditions. I submitted a paper to USENIX Security '26.
+- **[OxCrypt](https://github.com/agucova/oxcrypt):** A fast, memory-safe [Cryptomator](https://cryptomator.org/) client. I wrote the crypto core a while back and recently picked it back up, adding FUSE, WebDAV, NFS, and CLI support. Roughly 2–3× faster than the official Java client on metadata-heavy operations.
 
-I'm wrapping up my engineering degree at UC Chile, currently taking some of my final classes. Balancing coursework with running Kairos has been an... interesting challenge.
+## 📚 Finishing my degree
+
+This is my last semester of Computer Science Engineering at UC Chile. I'm taking a databases course (IIC3413) and an innovation & entrepreneurship course (ING2030), where my team is working on a project related to children's literacy in Chile. Nearly done!
