@@ -1,5 +1,5 @@
 // Cloudflare Worker serving the whole site: the static Astro build (dist/)
-// plus dynamic endpoints (currently POST /api/feedback).
+// plus dynamic endpoints (POST /api/feedback, GET /api/now-playing).
 //
 // No routes/custom domains here yet: first deploys go to workers.dev, and
 // the agucova.dev cutover from the old Pages project is done manually in
@@ -24,6 +24,16 @@
 			"name": "EMAIL",
 			"allowed_sender_addresses": ["feedback@agucova.dev"],
 			"allowed_destination_addresses": ["agucova@gmail.com"]
+		}
+	],
+	// Cache behind GET /api/now-playing (see docs/spotify-setup.md): holds the
+	// Spotify access token and the shaped response, so Spotify is called once
+	// per cache window instead of once per visitor. Every visitor gets the
+	// same JSON, so nothing visitor-specific is ever stored here.
+	"kv_namespaces": [
+		{
+			"binding": "NOW_PLAYING",
+			"id": "9cc79d836a0d48dd945e49e8f805acd6"
 		}
 	],
 	// Observability stays disabled on purpose: the feedback endpoint must

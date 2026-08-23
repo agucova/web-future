@@ -8,4 +8,17 @@ export interface Env {
 	EMAIL: SendEmail;
 	/** Turnstile secret key (Worker secret; .dev.vars locally). */
 	TURNSTILE_SECRET: string;
+	/**
+	 * Cache for the now-playing endpoint: the shaped response and the Spotify
+	 * access token. Holds no visitor data.
+	 */
+	NOW_PLAYING: KVNamespace;
+	/**
+	 * Spotify app credentials for the now-playing endpoint (Worker secrets;
+	 * .dev.vars locally). Optional: the endpoint reports nothing playing until
+	 * all three are set. See docs/spotify-setup.md.
+	 */
+	SPOTIFY_CLIENT_ID?: string;
+	SPOTIFY_CLIENT_SECRET?: string;
+	SPOTIFY_REFRESH_TOKEN?: string;
 }
