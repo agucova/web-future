@@ -1,4 +1,6 @@
 ---
+import { markdownPathFor, pageForPath } from '$lib/agents/pages';
+
 export interface Props {
     title?: string;
     description?: string;
@@ -25,6 +27,11 @@ const siteUrl = "https://agucova.dev";
 const currentUrl = Astro.url.pathname === "/" ? siteUrl : `${siteUrl}${Astro.url.pathname}`;
 const defaultDescription = "👨‍💻 A professional community builder and software engineer that does a bit of everything, but nothing specially well.";
 const metaDescription = actualDescription || defaultDescription;
+
+// Markdown twin discovery, per the llms.txt spec. The registry decides which
+// pages have one, so this can never advertise a twin that was not built.
+const registryEntry = pageForPath(Astro.url.pathname);
+const markdownHref = registryEntry?.source ? markdownPathFor(registryEntry.path) : null;
 ---
 
 <!doctype html>
@@ -40,6 +47,12 @@ const metaDescription = actualDescription || defaultDescription;
         <title>{pageTitle}</title>
         <meta name="description" content={metaDescription} />
         
+        <!-- Markdown twin and site index, for agents -->
+        {markdownHref && (
+            <link rel="alternate" type="text/markdown" href={markdownHref} />
+        )}
+        <link rel="describedby" href="/llms.txt" />
+
         <!-- SEO and Social Meta Tags -->
         <link rel="canonical" href={currentUrl} />
         <meta name="url" content={currentUrl} />
