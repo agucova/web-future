@@ -1,10 +1,10 @@
 # Deploying agucova.dev
 
 The site is a single Cloudflare Worker (`agucova-dev`) that serves the
-static Astro build from `dist/` and handles dynamic endpoints — currently
-the anonymous feedback relay at `POST /api/feedback`
-([`src/worker/`](src/worker/)). Configuration lives in
-[`wrangler.jsonc`](wrangler.jsonc).
+static Astro build from `dist/` and handles dynamic endpoints — the
+anonymous feedback relay at `POST /api/feedback` and the Spotify liveness
+endpoint at `GET /api/now-playing` ([`src/worker/`](src/worker/)).
+Configuration lives in [`wrangler.jsonc`](wrangler.jsonc).
 
 The feedback endpoint receives age-encrypted (armored) messages from
 [`/feedback`](src/pages/feedback.astro), verifies a Turnstile token, and
@@ -65,6 +65,10 @@ Already completed on the account — do not redo:
 - **age keypair generated**: the public recipient is baked into config.ts;
   the decryption secret lives only at
   `op://Private/zba2amz2hrfsjc3zbfgq7776zq/age_feedback_key`.
+- **`NOW_PLAYING` KV namespace created**: id
+  `9cc79d836a0d48dd945e49e8f805acd6`, already wired into `wrangler.jsonc`.
+  It caches the `/api/now-playing` response and Spotify access token, and
+  holds no visitor data (see [docs/spotify-setup.md](docs/spotify-setup.md)).
 
 ## Remaining deploy steps
 
@@ -89,7 +93,24 @@ op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/turnstile_secret" | cfwrangler 
 
 (Until this is set, submissions fail closed with 403.)
 
-### 3. Smoke test on workers.dev
+### 3. Set the Spotify secrets (now playing)
+
+`GET /api/now-playing` needs a Spotify developer app and a one-time OAuth
+handshake before it reports anything. The full walkthrough (app creation,
+`scripts/spotify-auth.ts`, the KV cache, local testing) is in
+[docs/spotify-setup.md](docs/spotify-setup.md). Once the credentials are in
+1Password:
+
+```fish
+op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/spotify_client_id" | cfwrangler secret put SPOTIFY_CLIENT_ID
+op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/spotify_client_secret" | cfwrangler secret put SPOTIFY_CLIENT_SECRET
+op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/spotify_refresh_token" | cfwrangler secret put SPOTIFY_REFRESH_TOKEN
+```
+
+This one fails open, not closed: until the secrets are set the endpoint
+answers `200 {"playing":false}` and the (not yet mounted) UI shows nothing.
+
+### 4. Smoke test on workers.dev
 
 Submit through `https://agucova-dev.agucova.workers.dev/feedback`, check
 the Gmail inbox, and decrypt:
@@ -98,7 +119,7 @@ the Gmail inbox, and decrypt:
 op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/age_feedback_key" | age -d -i - message.age
 ```
 
-### 4. Domain cutover from Pages
+### 5. Domain cutover from Pages
 
 The legacy Pages project is named `agucova` on account
 `d2fe37c02a1d31f3239f9c30c8907db7` and currently owns `agucova.dev` and
@@ -145,5 +166,16 @@ curl -i http://localhost:8787/api/feedback \
   -d '{"ciphertext": "-----BEGIN AGE ENCRYPTED FILE-----\n...\n-----END AGE ENCRYPTED FILE-----", "turnstileToken": "XXXX.DUMMY", "website": ""}'
 ```
 
+`/api/now-playing` works locally too, against wrangler's local KV
+simulation. With the placeholder Spotify values from `.dev.vars.example` the
+token exchange fails and the endpoint degrades as designed:
+
+```fish
+curl -i http://localhost:8787/api/now-playing
+# HTTP/1.1 200 OK
+# cache-control: public, max-age=30
+# {"playing":false}
+```
+
 Type checking: `bun run check:worker`. Tests (age round-trip + armor
-validation): `bun test`.
+validation, now-playing shaping and degradation): `bun test`.

@@ -3,3 +3,11 @@
 # fine for local testing, useless in production. The real secret is a Worker
 # secret set via `wrangler secret put TURNSTILE_SECRET` (see README.md).
 TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+
+# Spotify credentials for GET /api/now-playing (see docs/spotify-setup.md).
+# The placeholders below are deliberately invalid: the token exchange fails
+# and the endpoint degrades to 200 {"playing":false}, which is the path worth
+# exercising locally. Swap in the real values from 1Password to see a track.
+SPOTIFY_CLIENT_ID=fake-client-id
+SPOTIFY_CLIENT_SECRET=fake-client-secret
+SPOTIFY_REFRESH_TOKEN=fake-refresh-token
