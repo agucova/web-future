@@ -110,6 +110,12 @@ op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/spotify_refresh_token" | cfwran
 This one fails open, not closed: until the secrets are set the endpoint
 answers `200 {"playing":false}` and the (not yet mounted) UI shows nothing.
 
+To go quiet later without touching the secrets, use ghost mode
+(`bun run scripts/ghost.ts on|off|status`): the Worker then makes no Spotify
+call at all and keeps serving the last track it saw, unchanged and with its
+real timestamp, which from outside is indistinguishable from having stopped
+listening. Details in [docs/spotify-setup.md](docs/spotify-setup.md).
+
 ### 4. Smoke test on workers.dev
 
 Submit through `https://agucova-dev.agucova.workers.dev/feedback`, check

@@ -7,7 +7,13 @@ the "liveness" line in the site redesign.
 - Handler: [`src/worker/now-playing.ts`](../src/worker/now-playing.ts)
 - Route: registered in [`src/worker/index.ts`](../src/worker/index.ts)
 - Auth helper: [`scripts/spotify-auth.ts`](../scripts/spotify-auth.ts)
+- Ghost mode switch: [`scripts/ghost.ts`](../scripts/ghost.ts)
 - Cache: the `NOW_PLAYING` KV namespace in [`wrangler.jsonc`](../wrangler.jsonc)
+
+Music only: podcast episodes are excluded everywhere. A live episode counts
+as "nothing playing" and falls through to the most recent music track, and
+no show name can reach any field. (Spotify's recently-played endpoint
+returns tracks only, so the history needs no filtering.)
 
 ## Response contract
 
@@ -27,8 +33,9 @@ Always `200 application/json`, with `cache-control: public, max-age=30`:
 { "playing": false }
 ```
 
-`album` is omitted for podcast episodes (the show name lands in `artist`).
-`playedAt` is only present when `playing` is `false`.
+`album` is omitted when Spotify does not supply one. `playedAt` is only
+present when `playing` is `false`, and stays a precise ISO timestamp: a
+future UI decides how to phrase it.
 
 The endpoint never returns 5xx to visitors. Missing secrets, a revoked
 refresh token, a Spotify outage, a malformed payload and KV failures all
@@ -66,6 +73,18 @@ Spotify consent page (scopes `user-read-currently-playing` and
 `user-read-recently-played`, nothing else), exchanges the returned code, and
 prints the refresh token. It does not expire, so treat it like a password.
 
+Better: pass `--op-item` and the token never reaches the terminal at all.
+
+```fish
+bun run scripts/spotify-auth.ts --op-item zba2amz2hrfsjc3zbfgq7776zq
+```
+
+In that mode the script reads `spotify_client_id` and `spotify_client_secret`
+from the item (so neither credential appears in shell history either), and
+on success writes the result straight back into the same item as
+`spotify_refresh_token`, a concealed field. It prints only a confirmation.
+Explicit `--client-id` / `--client-secret` flags still win if you pass them.
+
 Add `--port <n>` if 8888 is taken, and register the matching redirect URI on
 the Spotify app first. `--no-open` prints the authorization URL instead of
 opening a browser tab.
@@ -81,9 +100,10 @@ Keep all three next to the site's other secrets in 1Password, in item
 
 - `spotify_client_id`
 - `spotify_client_secret`
-- `spotify_refresh_token`
+- `spotify_refresh_token` (already written by step 2 if you used `--op-item`)
 
-Then set them as Worker secrets. `cfwrangler` stands for the full
+Then set them as Worker secrets. Piping straight from `op` keeps the values
+out of the terminal and out of shell history. `cfwrangler` stands for the full
 credentialed invocation from [DEPLOY.md](../DEPLOY.md); never
 `wrangler login`.
 
@@ -112,17 +132,63 @@ Created with (do not redo):
 env CLOUDFLARE_API_TOKEN=(op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/api_token") CLOUDFLARE_ACCOUNT_ID=d2fe37c02a1d31f3239f9c30c8907db7 bunx wrangler kv namespace create NOW_PLAYING
 ```
 
-It holds two keys, neither of them visitor data:
+It holds four keys, none of them visitor data:
 
 - `response:v1` — the shaped JSON, fresh for 45 seconds. Every visitor gets
   this same body, so Spotify sees roughly one request per 45 seconds no
   matter how much traffic the site takes.
 - `token:v1` — the current Spotify access token, held until a minute before
   it expires (Spotify issues them with a one hour life).
+- `last:v1` — the most recent music track ever shaped, with its real ISO
+  timestamp (for a live track, the moment it was observed). Written with no
+  TTL, because ghost mode may need to serve it months later.
+- `ghost:v1` — the ghost mode switch, described below. Absent means off.
 
-Both entries carry a 60 second minimum `expirationTtl` because that is KV's
+The first two carry a 60 second minimum `expirationTtl` because that is KV's
 floor; the shorter freshness window is enforced by a timestamp inside the
 entry.
+
+## Ghost mode
+
+Ghost mode stops the endpoint reporting activity, for travel or any other
+time the liveness line should not be a presence signal.
+
+```fish
+bun run scripts/ghost.ts on      # stop reporting
+bun run scripts/ghost.ts off     # resume
+bun run scripts/ghost.ts status  # check
+```
+
+Add `--local` to any of those to drive the KV simulation `wrangler dev` uses
+instead of the deployed namespace.
+
+While it is on:
+
+- The Worker makes **no Spotify API call at all**. Not a token refresh, not
+  a playback read. There is no request pattern to observe, and nothing about
+  the ghost period is written to KV either.
+- The endpoint serves `last:v1` — the last track seen before the switch —
+  as a normal `"playing": false` response, carrying that track's original
+  timestamp.
+- Same status code, same headers, same `cache-control` as always.
+
+That entry then ages on its own, which is the point: an observer sees a
+track that was played at a real time and has not changed since, which is
+exactly what someone who stopped listening after that song looks like.
+Turning ghost mode on is therefore not observable from outside. Nothing
+announces the transition, and there is no "ghost" marker in the response.
+
+If `last:v1` has never been written, the endpoint answers `{"playing":
+false}`.
+
+Switching on also deletes `response:v1`, so a live answer cached seconds
+earlier cannot outlive the flag. Switching off deletes it too, so normal
+reporting resumes on the very next request.
+
+One deliberate failure choice: if the Worker cannot read the flag at all (a
+KV failure), it behaves as though ghost mode were **on**. Staying quiet
+during an outage is both the private answer and an unremarkable one, whereas
+guessing "off" could publish activity that was meant to be hidden.
 
 ## 5. Local development
 
@@ -167,3 +233,6 @@ weaken the feedback endpoint's guarantees.
   token: re-run `scripts/spotify-auth.ts` and set all three secrets again.
 - After any of the above, the endpoint quietly falls back to
   `{ "playing": false }` rather than erroring.
+
+To go quiet without touching any credential, use ghost mode instead: it is
+reversible, leaves the Spotify app alone, and looks like nothing happened.
