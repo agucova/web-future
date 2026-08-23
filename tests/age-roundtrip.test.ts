@@ -60,6 +60,15 @@ describe("age round-trip (client encryption path)", () => {
 				"-----BEGIN AGE ENCRYPTED FILE-----\nnot base64 at all!!\n-----END AGE ENCRYPTED FILE-----",
 			),
 		).toBe(false);
+		// Base64-wrapped plaintext inside a valid-looking envelope must fail
+		// the age file magic check.
+		const b64Plaintext = btoa("this is readable feedback, just base64-encoded so it looks opaque....");
+		const smuggled = [
+			"-----BEGIN AGE ENCRYPTED FILE-----",
+			...(b64Plaintext.match(/.{1,64}/g) ?? []),
+			"-----END AGE ENCRYPTED FILE-----",
+		].join("\n");
+		expect(isArmoredAgeMessage(smuggled)).toBe(false);
 		// Plaintext smuggled around a valid-looking envelope must not pass.
 		const identity = await generateIdentity();
 		const recipient = await identityToRecipient(identity);

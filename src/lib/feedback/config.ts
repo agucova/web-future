@@ -17,10 +17,13 @@ export const AGE_RECIPIENT =
 	"age1jd2nt7k67s4jw4qu0xt8g00ah202uyq9u2cql653yj2gpdfznqvs7c8f6p";
 
 /**
- * Cloudflare Turnstile site key rendered on the form page.
+ * Cloudflare Turnstile site key rendered on the form page (site keys are
+ * public by design). The widget is mode=managed and valid for agucova.dev
+ * and agucova.workers.dev.
  *
- * TEST-ONLY: this is Cloudflare's dummy "visible, always passes" widget site
- * key. It works on any domain but provides no bot protection. Replace with
- * the real site key after creating the Turnstile widget (see DEPLOY.md).
+ * Local dev note: localhost is not in the widget's domains, so when testing
+ * the form against `wrangler dev`, temporarily swap in Cloudflare's dummy
+ * always-pass site key "1x00000000000000000000AA" (its matching dummy
+ * secret already lives in .dev.vars). Never commit the swap.
  */
-export const TURNSTILE_SITE_KEY = "1x00000000000000000000AA";
+export const TURNSTILE_SITE_KEY = "0x4AAAAAAEYyo6jn2FUNqMqR";

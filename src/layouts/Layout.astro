@@ -3,13 +3,19 @@ export interface Props {
     title?: string;
     description?: string;
     isHome?: boolean;
+    /**
+     * Strips every third-party script (FontAwesome, SavvyCal, the analytics
+     * beacon) and the icon footer. Used by privacy-sensitive pages like
+     * /feedback, where no external code may share the DOM with user input.
+     */
+    minimal?: boolean;
     frontmatter?: {
         title?: string;
         description?: string;
     };
 }
 
-const { title, description, isHome = false, frontmatter } = Astro.props;
+const { title, description, isHome = false, minimal = false, frontmatter } = Astro.props;
 // Use frontmatter values if available (from .md), otherwise use direct props (from .astro)
 const actualTitle = frontmatter?.title || title;
 const actualDescription = frontmatter?.description || description;
@@ -78,10 +84,16 @@ const metaDescription = actualDescription || defaultDescription;
             type="module"
             src="/js/dark-mode-toggle.mjs"
             fetchpriority="high"></script>
-        <script
-            defer
-            src="https://kit.fontawesome.com/68bd2bccda.js"
-            crossorigin="anonymous"></script>
+        {
+            !minimal && (
+                <script
+                    is:inline
+                    defer
+                    src="https://kit.fontawesome.com/68bd2bccda.js"
+                    crossorigin="anonymous"
+                />
+            )
+        }
 
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
@@ -103,21 +115,31 @@ const metaDescription = actualDescription || defaultDescription;
         }
         </script>
         
-        <script>
-            window.SavvyCal =
-                window.SavvyCal ||
-                function () {
-                    (SavvyCal.q = SavvyCal.q || []).push(arguments);
-                };
-        </script>
-        <script async src="https://embed.savvycal.com/v1/embed.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                if (window.SavvyCal && typeof window.SavvyCal === 'function') {
-                    SavvyCal("init");
-                }
-            });
-        </script>
+        {
+            !minimal && (
+                <>
+                    <script is:inline>
+                        window.SavvyCal =
+                            window.SavvyCal ||
+                            function () {
+                                (SavvyCal.q = SavvyCal.q || []).push(arguments);
+                            };
+                    </script>
+                    <script
+                        is:inline
+                        async
+                        src="https://embed.savvycal.com/v1/embed.js"
+                    />
+                    <script is:inline>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            if (window.SavvyCal && typeof window.SavvyCal === 'function') {
+                                SavvyCal('init');
+                            }
+                        });
+                    </script>
+                </>
+            )
+        }
     </head>
     <body>
         <nav id="upper-nav">
@@ -166,7 +188,7 @@ const metaDescription = actualDescription || defaultDescription;
             <slot />
         </main>
 
-        <div id="social">
+        {!minimal && <div id="social">
             <a
                 title="GitHub"
                 target="_blank"
@@ -206,12 +228,21 @@ const metaDescription = actualDescription || defaultDescription;
                 rel="noopener noreferrer"
                 aria-label="Email"><i class="fas fa-envelope"></i></a
             >
-        </div><br />
+        </div>}<br />
 
         <dark-mode-toggle permanent></dark-mode-toggle>
-        
-        <!-- Cloudflare Pages Analytics -->
-        <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "cc1d38a68b2d449b9237184344b32ec0"}'></script>
-        <!-- Cloudflare Pages Analytics -->
+
+        {
+            /* Analytics beacon: excluded on minimal pages so no timestamped
+               pageview of e.g. /feedback ever lands in a dashboard. */
+            !minimal && (
+                <script
+                    is:inline
+                    defer
+                    src="https://static.cloudflareinsights.com/beacon.min.js"
+                    data-cf-beacon='{"token": "cc1d38a68b2d449b9237184344b32ec0"}'
+                />
+            )
+        }
     </body>
 </html>

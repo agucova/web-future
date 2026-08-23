@@ -6,11 +6,13 @@ const title = "Feedback";
 const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
 ---
 
-<Layout title={title} description={description}>
+<!-- minimal: no third-party scripts may share this DOM with the plaintext
+     textarea (they could read the message before encryption). -->
+<Layout title={title} description={description} minimal>
     <h1>{title}</h1>
 
     <p>
-        Got feedback for me? Praise, criticism, something I should know —
+        Got feedback for me? Praise, criticism, something I should know:
         I want to hear it, especially if it's awkward to say to my face.
     </p>
     <p>
@@ -18,22 +20,25 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
         is encrypted <em>in your browser</em> (using
         <a href="https://age-encryption.org" rel="noopener noreferrer">age</a>)
         to my public key before it leaves the page. The server only ever sees
-        ciphertext, stores nothing, and doesn't record your IP address — the
+        ciphertext, stores nothing, and doesn't record your IP address. The
         encrypted message is relayed straight to my inbox, where only I can
         decrypt it. If you don't trust me on that, the
         <a
-            href="https://github.com/agucova/web"
+            href="https://github.com/agucova/web-future"
             rel="noopener noreferrer">code is public</a
-        >.
+        > (though, as with anything E2EE on the web, you're ultimately trusting
+        the code this site serves you).
     </p>
     <p>
-        Since it's anonymous, I can't reply — include contact info in the
-        message if you'd like a response.
+        Since it's anonymous, I can't reply, so include contact info in the
+        message if you'd like a response. One caveat: messages are relayed in
+        real time, so I can see roughly <em>when</em> one arrives. If that
+        timing alone could identify you, hold your message and send it later.
     </p>
 
     <noscript>
         <p>
-            <strong>This form needs JavaScript</strong> — the encryption
+            <strong>This form needs JavaScript.</strong> The encryption
             happens in your browser, so there's no way around it. If you'd
             rather not enable it, you can PGP-encrypt an email to me instead
             (see <a href="/pgp">/pgp</a>).
@@ -125,6 +130,16 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
                 return;
             }
 
+            // Fail loud on a filled honeypot: browser autofill occasionally
+            // populates hidden fields, and a silent server-side drop would
+            // destroy a real person's message without them knowing.
+            if (honeypot !== "") {
+                setStatus(
+                    "A hidden anti-spam field got filled in, probably by browser autofill. Nothing was sent. Please reload the page and try again.",
+                );
+                return;
+            }
+
             // The Turnstile token is normally fetched invisibly in the
             // background; if it isn't ready yet, wait for it briefly rather
             // than bothering the visitor about a widget they can't see.
@@ -141,7 +156,7 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
                 }
                 if (!turnstileToken) {
                     setStatus(
-                        "The human check didn't complete — if a challenge appeared below, please finish it and submit again.",
+                        "The human check didn't complete. If a challenge appeared below, please finish it and submit again.",
                     );
                     return;
                 }
@@ -161,9 +176,9 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
                     await encrypter.encrypt(plaintext),
                 );
 
-                if (ciphertext.length > 30_000) {
+                if (ciphertext.length > 28_000) {
                     setStatus(
-                        "That message is too long to send — please trim it down.",
+                        "That message is too long to send. Please trim it down.",
                     );
                     submitButton.disabled = false;
                     return;
@@ -184,7 +199,7 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
                     form.reset();
                     form.hidden = true;
                     setStatus(
-                        "Sent! Your encrypted message is on its way. Thank you — I read everything.",
+                        "Sent! Your encrypted message is on its way. Thank you, I read everything.",
                     );
                 } else {
                     let detail = "";

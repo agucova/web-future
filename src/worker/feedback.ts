@@ -13,8 +13,9 @@
  *   - The client IP is never read, never forwarded to Turnstile's siteverify
  *     (the `remoteip` parameter is deliberately omitted), and never appears
  *     in the outgoing email.
- *   - The email subject only carries a coarse YYYY-MM date, so the inbox
- *     doesn't accumulate precise submission timestamps.
+ *   - The email subject only carries a coarse YYYY-MM date. (The relay is
+ *     real-time, so email transport headers inherently reveal arrival time;
+ *     the form page discloses this to senders.)
  */
 import type { Env } from "./env";
 
@@ -54,11 +55,17 @@ function jsonError(status: number, message: string, extraHeaders?: Record<string
 	});
 }
 
+/** The magic prefix of every (decoded) age v1 file. */
+const AGE_FILE_MAGIC = "age-encryption.org/v1\n";
+
 /**
  * Strictly validates that a string is an ASCII-armored age message: header
- * line, base64 body lines (64 chars each, shorter final line), footer line.
- * This is what guarantees the endpoint never relays plaintext — anything
- * that doesn't parse as armor is rejected.
+ * line, base64 body lines (64 chars each, shorter final line), footer line,
+ * and a decoded body that starts with the age v1 file magic. This is what
+ * keeps readable plaintext out of the relay: anything that doesn't parse as
+ * armor-wrapped age data is rejected. (Format checks can't prove the payload
+ * was encrypted *to the right key* — a direct POSTer bypassing the form can
+ * still submit valid-looking age data that decrypts to nothing useful.)
  */
 export function isArmoredAgeMessage(input: string): boolean {
 	const lines = input.trim().split(/\r?\n/);
@@ -75,7 +82,16 @@ export function isArmoredAgeMessage(input: string): boolean {
 		if (i < body.length - 1 && line.length !== 64) return false;
 		if (!BASE64_LINE.test(line)) return false;
 	}
-	return true;
+
+	// The first body line decodes standalone (base64 works in 4-char units,
+	// 64 chars = 48 bytes) and must start with the age file magic.
+	const first = body[0];
+	if (first === undefined) return false;
+	try {
+		return atob(first).startsWith(AGE_FILE_MAGIC);
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -116,13 +132,18 @@ async function readBodyCapped(request: Request, cap: number): Promise<string | n
 async function verifyTurnstile(secret: string, token: string): Promise<boolean> {
 	// `remoteip` is deliberately not sent: the sender's IP must never leave
 	// this request's context, not even towards Turnstile.
-	const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-		method: "POST",
-		body: new URLSearchParams({ secret, response: token }),
-	});
-	if (!response.ok) return false;
-	const outcome = (await response.json()) as SiteverifyResult;
-	return outcome.success === true;
+	try {
+		const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+			method: "POST",
+			body: new URLSearchParams({ secret, response: token }),
+		});
+		if (!response.ok) return false;
+		const outcome = (await response.json()) as SiteverifyResult;
+		return outcome.success === true;
+	} catch {
+		// Network failure towards siteverify: fail closed, log nothing.
+		return false;
+	}
 }
 
 async function handlePost(request: Request, env: FeedbackEnv): Promise<Response> {
@@ -131,12 +152,16 @@ async function handlePost(request: Request, env: FeedbackEnv): Promise<Response>
 		return jsonError(413, "Request body too large.");
 	}
 
-	let payload: FeedbackPayload;
+	let parsed: unknown;
 	try {
-		payload = JSON.parse(rawBody) as FeedbackPayload;
+		parsed = JSON.parse(rawBody);
 	} catch {
 		return jsonError(400, "Body must be valid JSON.");
 	}
+	if (typeof parsed !== "object" || parsed === null) {
+		return jsonError(400, "Body must be a JSON object.");
+	}
+	const payload = parsed as FeedbackPayload;
 
 	// Honeypot: the hidden "website" field must be empty. Bots that fill it
 	// get a silent success so they don't learn they were caught.
@@ -157,8 +182,10 @@ async function handlePost(request: Request, env: FeedbackEnv): Promise<Response>
 		return jsonError(403, "Human verification failed. Please try again.");
 	}
 
-	// Coarse date only (YYYY-MM): a precise timestamp in the subject would
-	// undermine sender anonymity by pinpointing when they submitted.
+	// Coarse date only (YYYY-MM) in the subject. Honest caveat: this only
+	// avoids adding yet another precise timestamp — the relay is real-time,
+	// so the email's own Date/Received headers still reveal arrival time.
+	// The form page discloses this to senders.
 	const now = new Date();
 	const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
