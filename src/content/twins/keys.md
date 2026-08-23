@@ -41,10 +41,10 @@ Static keys are for files and one-off messages. For an actual conversation, use 
 
 ## Identity
 
-My accounts are tied together with an [Ariadne](https://docs.keyoxide.org/wiki/ariadne-identity/) profile, which you can verify with [Keyoxide](https://keyoxide.org/aspe:keyoxide.org:OINESA65LDHLH6SKFODDDIQXZM) or any other implementation. Verification is a public algorithm: each claimed account publishes a link back to the profile, and you can check those links yourself without trusting me or Keyoxide.
+My accounts are tied together with an [Ariadne](https://docs.keyoxide.org/wiki/ariadne-identity/) profile, which you can verify with [Keyoxide](https://keyoxide.org/aspe:keyoxide.org:TDJ7KADY5LUZNFIFGWYETVL5TU) or any other implementation. Verification is a public algorithm: each claimed account publishes a link back to the profile, and you can check those links yourself without trusting me or Keyoxide.
 
 ```
-aspe:keyoxide.org:OINESA65LDHLH6SKFODDDIQXZM
+aspe:keyoxide.org:TDJ7KADY5LUZNFIFGWYETVL5TU
 ```
 
 The backlinks, if you want to check them by hand:

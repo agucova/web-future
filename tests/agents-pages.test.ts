@@ -67,11 +67,51 @@ describe("the page registry", () => {
 		}
 	});
 
+	test("reuses each page's own meta description as its llms.txt note", () => {
+		for (const file of pageFiles()) {
+			const source = readFileSync(`${ROOT}src/pages/${file}`, "utf8");
+			// .astro pages declare it as a const, .md pages in frontmatter.
+			// The Exiliada page writes the tag by hand and is skipped.
+			const declared = /^(?:const description = |description: )"([^"]+)";?$/m.exec(source);
+			if (declared === null) continue;
+			expect(pageForPath(routeFor(file))?.description).toBe(declared[1] as string);
+		}
+	});
+
 	test("keeps public prose free of em dashes", () => {
 		for (const page of PAGES) {
 			expect(page.title).not.toContain("—");
 			expect(page.description).not.toContain("—");
 		}
+	});
+});
+
+/**
+ * The twins of the .astro pages are hand written, so they are the only ones
+ * that can drift from the page they mirror. Key material and fingerprints
+ * are the part where drift is actively harmful, so they are pinned here: a
+ * key rotated in the page fails the build until the twin follows.
+ */
+describe("hand-authored twins", () => {
+	function read(path: string): string {
+		return readFileSync(`${ROOT}${path}`, "utf8");
+	}
+
+	test("/keys.md carries the same key material as keys.astro", () => {
+		const page = read("src/pages/keys.astro");
+		const twin = read("src/content/twins/keys.md");
+
+		const constants = [...page.matchAll(/^const [A-Z_]+ = "([^"]+)";$/gm)].map((match) => match[1] as string);
+		expect(constants.length).toBeGreaterThan(0);
+		for (const value of constants) {
+			expect(twin).toContain(value);
+		}
+	});
+
+	test("/pgp.md carries the same fingerprint as pgp.astro", () => {
+		const fingerprint = /(?:[0-9A-F]{4} ){9}[0-9A-F]{4}/.exec(read("src/pages/pgp.astro"));
+		expect(fingerprint).not.toBeNull();
+		expect(read("src/content/twins/pgp.md")).toContain(fingerprint?.[0] as string);
 	});
 });
 
