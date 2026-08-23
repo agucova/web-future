@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { TURNSTILE_SITE_KEY } from '$lib/feedback/config';
 
 const title = "Feedback";
-const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
+const description = "Send me anonymous, end-to-end encrypted feedback.";
 ---
 
 <!-- minimal: no third-party scripts may share this DOM with the plaintext
@@ -12,29 +12,34 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
     <h1>{title}</h1>
 
     <p>
-        Got feedback for me? Praise, criticism, something I should know:
-        I want to hear it, especially if it's awkward to say to my face.
-    </p>
-    <p>
         This form is <strong>anonymous by construction</strong>: your message
-        is encrypted <em>in your browser</em> (using
-        <a href="https://age-encryption.org" rel="noopener noreferrer">age</a>)
-        to my public key before it leaves the page. The server only ever sees
-        ciphertext, stores nothing, and doesn't record your IP address. The
-        encrypted message is relayed straight to my inbox, where only I can
-        decrypt it. If you don't trust me on that, the
-        <a
-            href="https://github.com/agucova/web-future"
-            rel="noopener noreferrer">code is public</a
-        > (though, as with anything E2EE on the web, you're ultimately trusting
-        the code this site serves you).
+        is encrypted in your browser to my public key, so I can't tell who
+        sent it — and the server never sees plaintext.
     </p>
-    <p>
-        Since it's anonymous, I can't reply, so include contact info in the
-        message if you'd like a response. One caveat: messages are relayed in
-        real time, so I can see roughly <em>when</em> one arrives. If that
-        timing alone could identify you, hold your message and send it later.
-    </p>
+
+    <details>
+        <summary>How it works</summary>
+        <p>
+            The page encrypts your message with
+            <a href="https://age-encryption.org" rel="noopener noreferrer"
+                >age</a
+            > before it leaves your browser. The server only accepts
+            ciphertext, stores nothing, doesn't record your IP address, and
+            relays the encrypted message straight to my inbox, where only I
+            can decrypt it. The
+            <a
+                href="https://github.com/agucova/web-future"
+                rel="noopener noreferrer">code is public</a
+            > (though, as with anything E2EE on the web, you're ultimately
+            trusting the code this site serves you).
+        </p>
+        <p>
+            Since it's anonymous, I can't reply — include contact info if
+            you'd like a response. Messages relay in real time, so I can see
+            roughly <em>when</em> one arrives; if that timing alone could
+            identify you, hold your message and send it later.
+        </p>
+    </details>
 
     <noscript>
         <p>
