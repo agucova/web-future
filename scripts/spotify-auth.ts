@@ -32,11 +32,28 @@ const TIMEOUT_MS = 5 * 60 * 1000;
 /** Grace period so the confirmation page reaches the browser before shutdown. */
 const RESPONSE_FLUSH_MS = 250;
 
+/** 1Password field names inside the item passed to --op-item. */
+const OP_VAULT = "Private";
+const OP_CLIENT_ID_FIELD = "spotify_client_id";
+const OP_CLIENT_SECRET_FIELD = "spotify_client_secret";
+const OP_REFRESH_TOKEN_FIELD = "spotify_refresh_token";
+
 interface Options {
 	clientId: string;
 	clientSecret: string;
 	port: number;
 	openBrowser: boolean;
+	/** 1Password item id. When set, the refresh token is never printed. */
+	opItem: string | null;
+}
+
+/** Everything the flags give us, before 1Password fills in the blanks. */
+interface RawOptions {
+	clientId: string;
+	clientSecret: string;
+	port: number;
+	openBrowser: boolean;
+	opItem: string | null;
 }
 
 /** Flags that take no value. */
@@ -44,12 +61,17 @@ const BOOLEAN_FLAGS = new Set(["no-open"]);
 
 const USAGE = `Usage:
   bun run scripts/spotify-auth.ts --client-id <id> --client-secret <secret> [--port ${DEFAULT_PORT}] [--no-open]
+  bun run scripts/spotify-auth.ts --op-item <item id> [--port ${DEFAULT_PORT}] [--no-open]
 
 Falls back to the SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET environment
 variables when a flag is omitted. --no-open only prints the authorization
-URL instead of opening a browser tab.`;
+URL instead of opening a browser tab.
 
-function parseArgs(argv: string[]): Options | { error: string } {
+--op-item reads the client id and secret from that 1Password item and writes
+the refresh token straight back into it, so the token never reaches the
+terminal.`;
+
+function parseArgs(argv: string[]): RawOptions | { error: string } {
 	const values = new Map<string, string>();
 
 	for (let i = 0; i < argv.length; i++) {
@@ -73,12 +95,6 @@ function parseArgs(argv: string[]): Options | { error: string } {
 		i++;
 	}
 
-	const clientId = values.get("client-id") ?? process.env.SPOTIFY_CLIENT_ID ?? "";
-	const clientSecret = values.get("client-secret") ?? process.env.SPOTIFY_CLIENT_SECRET ?? "";
-	if (clientId.trim() === "" || clientSecret.trim() === "") {
-		return { error: "Both --client-id and --client-secret are required." };
-	}
-
 	const rawPort = values.get("port");
 	const port = rawPort === undefined ? DEFAULT_PORT : Number(rawPort);
 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -86,11 +102,62 @@ function parseArgs(argv: string[]): Options | { error: string } {
 	}
 
 	return {
-		clientId: clientId.trim(),
-		clientSecret: clientSecret.trim(),
+		clientId: (values.get("client-id") ?? process.env.SPOTIFY_CLIENT_ID ?? "").trim(),
+		clientSecret: (values.get("client-secret") ?? process.env.SPOTIFY_CLIENT_SECRET ?? "").trim(),
 		port,
 		openBrowser: values.get("no-open") !== "true",
+		opItem: values.get("op-item")?.trim() ?? null,
 	};
+}
+
+/** Reads one secret out of 1Password without it passing through a shell. */
+async function opRead(reference: string): Promise<string | null> {
+	const proc = Bun.spawn(["op", "read", reference], { stdout: "pipe", stderr: "pipe" });
+	const [stdout, code] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
+	if (code !== 0) return null;
+	const value = stdout.trim();
+	return value === "" ? null : value;
+}
+
+/**
+ * Writes the refresh token into the 1Password item. The value is passed to
+ * `op` through argv straight from memory, so it is never echoed, never
+ * written to a file, and never lands in shell history. `op` echoes the edited
+ * item back on stdout, so that output is discarded rather than shown.
+ */
+async function opStoreRefreshToken(item: string, refreshToken: string): Promise<string | null> {
+	const proc = Bun.spawn(["op", "item", "edit", item, `${OP_REFRESH_TOKEN_FIELD}[concealed]=${refreshToken}`], {
+		stdout: "ignore",
+		stderr: "pipe",
+	});
+	const [stderr, code] = await Promise.all([new Response(proc.stderr).text(), proc.exited]);
+	if (code === 0) return null;
+	return stderr.trim() === "" ? `op exited with code ${code}` : stderr.trim();
+}
+
+/** Fills any credential the flags did not supply from the 1Password item. */
+async function resolveOptions(raw: RawOptions): Promise<Options | { error: string }> {
+	let { clientId, clientSecret } = raw;
+
+	if (raw.opItem !== null) {
+		if (clientId === "") {
+			clientId = (await opRead(`op://${OP_VAULT}/${raw.opItem}/${OP_CLIENT_ID_FIELD}`)) ?? "";
+		}
+		if (clientSecret === "") {
+			clientSecret = (await opRead(`op://${OP_VAULT}/${raw.opItem}/${OP_CLIENT_SECRET_FIELD}`)) ?? "";
+		}
+		if (clientId === "" || clientSecret === "") {
+			return {
+				error: `Could not read ${OP_CLIENT_ID_FIELD} and ${OP_CLIENT_SECRET_FIELD} from 1Password item ${raw.opItem}.`,
+			};
+		}
+	}
+
+	if (clientId === "" || clientSecret === "") {
+		return { error: "Both --client-id and --client-secret are required (or use --op-item)." };
+	}
+
+	return { clientId, clientSecret, port: raw.port, openBrowser: raw.openBrowser, opItem: raw.opItem };
 }
 
 function browserPage(title: string, detail: string): Response {
@@ -201,7 +268,14 @@ async function exchangeCode(options: Options, code: string, redirectUri: string)
 }
 
 async function main(): Promise<void> {
-	const parsed = parseArgs(process.argv.slice(2));
+	const raw = parseArgs(process.argv.slice(2));
+	if ("error" in raw) {
+		console.error(`${raw.error}\n\n${USAGE}`);
+		process.exitCode = 1;
+		return;
+	}
+
+	const parsed = await resolveOptions(raw);
 	if ("error" in parsed) {
 		console.error(`${parsed.error}\n\n${USAGE}`);
 		process.exitCode = 1;
@@ -240,6 +314,18 @@ async function main(): Promise<void> {
 		return;
 	} finally {
 		await listener.stop();
+	}
+
+	if (parsed.opItem !== null) {
+		const failure = await opStoreRefreshToken(parsed.opItem, refreshToken);
+		if (failure !== null) {
+			console.error(`\nCould not write the refresh token to 1Password: ${failure}`);
+			process.exitCode = 1;
+			return;
+		}
+		console.log("\nRefresh token stored in 1Password.");
+		console.log("Next steps: docs/spotify-setup.md step 3.");
+		return;
 	}
 
 	console.log("\nRefresh token (treat it like a password, it does not expire):\n");
