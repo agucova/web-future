@@ -24,6 +24,7 @@ Personal website (agucova.dev). Astro 5 static site with Svelte 5 islands and Ta
 - Until the domain cutover in DEPLOY.md happens, the live site is still the legacy Cloudflare Pages project, deployed by every push to `main`. Do not push unless the change is meant to go live.
 
 ## Conventions
+- Every page is registered in `src/lib/agents/pages.ts`, which drives the markdown twins (`/now.md`), `/llms.txt`, the `<link rel="alternate">` tags and the Worker's `Accept` negotiation. Add a page there or `bun test` fails. See DEPLOY.md for the cache trap that comes with negotiation.
 - Conventional commits (feat:/fix:/docs:/style:/refactor:/chore:/ci:)
 - CI (GitHub Actions) runs `bunx astro check` and `bun run build` on pushes to main and PRs.
 - Keep HTML minimal and semantic; maintain accessibility standards.

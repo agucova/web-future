@@ -38,6 +38,69 @@ Operational corollaries — things that would silently break the invariants:
   Logpush/Instant Logs jobs covering `/api/feedback`, and be aware that WAF
   or Bot Fight Mode "Security Events" log client IPs for matched requests.
 
+## Markdown twins and content negotiation
+
+Every page except the interactive Exiliada piece is published twice: as HTML
+at its own URL, and as markdown at the same path with `.md`
+(`/now` and `/now.md`, the root's twin being `/index.md`). A request that
+sends `Accept: text/markdown` on a page URL gets the twin; everyone else gets
+the HTML, with a `Link: </now.md>; rel="alternate"; type="text/markdown"`
+header pointing at it. `/llms.txt` indexes the lot.
+
+[`src/lib/agents/pages.ts`](src/lib/agents/pages.ts) is the single registry
+behind all of it: the twin emitter
+([`src/pages/[...page].md.ts`](src/pages/%5B...page%5D.md.ts)), `/llms.txt`,
+the `<link rel="alternate">` tags in `Layout.astro`, the Worker's
+negotiation ([`src/worker/negotiate.ts`](src/worker/negotiate.ts)) and the
+`run_worker_first` list all read it. Adding a page without registering it
+fails `bun test`.
+
+### Routing
+
+```jsonc
+"run_worker_first": ["/", "/now", "/uses", "/pgp", "/keys", "/feedback", "/api/*"]
+```
+
+This must stay an **array, never `true`**. Without it the asset server would
+answer page requests directly and the negotiation would never run; with
+`true` every `/_astro/*` chunk, stylesheet and image would become a billed
+Worker invocation on the critical path for static bytes. Verified locally:
+15 asset requests produced 0 Worker invocations, 3 page requests produced 3.
+
+`html_handling` is set to `drop-trailing-slash` to match Astro's
+`trailingSlash: 'never'`. The asset server's default would make `/now/` the
+canonical URL and redirect `/now` to it, which contradicts every canonical
+link the site emits and would land agents on a path that is not Worker-first
+and therefore never negotiates.
+
+### The cache trap (read before touching cache settings)
+
+Cloudflare's edge ignores `Vary` on everything except `Accept-Encoding`. Two
+representations under one URL therefore share a cache key, and a cached
+markdown response would be served to browsers (and a cached HTML response to
+agents).
+
+- Negotiated page URLs answer with
+  `Cache-Control: public, max-age=0, must-revalidate` plus `Vary: Accept`.
+  The Worker runs on every page request; the `ASSETS.fetch` behind it is
+  cheap and edge-local, which at this traffic volume is the right trade.
+- The standalone `.md` URLs are a single representation each and are served
+  asset-first, so they cache normally.
+- **Do not** add a "cache everything" Cache Rule, a Tiered Cache or an Edge
+  TTL override covering `/`, `/now`, `/uses`, `/pgp`, `/keys` or
+  `/feedback`. If one is ever wanted, it needs a custom cache key with a
+  normalized `Accept` dimension (`html` or `md`, never the raw header),
+  which is a paid-plan feature. Enabling one without that quietly serves
+  markdown to browsers.
+
+### Privacy
+
+Negotiation reads exactly one request header, `Accept`, and records nothing.
+Note that "nothing is persisted" is a per-endpoint invariant now rather than
+a Worker-wide one: `/api/now-playing` writes its Spotify cache to the
+`NOW_PLAYING` KV namespace (no visitor data), while `/api/feedback` and the
+negotiation path persist nothing at all.
+
 ## Wrangler auth (IMPORTANT)
 
 All wrangler commands against this account must be run with explicit
@@ -183,5 +246,15 @@ curl -i http://localhost:8787/api/now-playing
 # {"playing":false}
 ```
 
+Markdown negotiation can be exercised the same way:
+
+```fish
+curl -sI -H 'Accept: text/markdown' http://localhost:8787/now   # text/markdown
+curl -sI -H 'Accept: text/html' http://localhost:8787/now       # html + Link
+curl -s  http://localhost:8787/now.md                           # the twin itself
+curl -s  http://localhost:8787/llms.txt
+```
+
 Type checking: `bun run check:worker`. Tests (age round-trip + armor
-validation, now-playing shaping and degradation): `bun test`.
+validation, now-playing shaping and degradation, Accept negotiation, page
+registry and `run_worker_first` drift): `bun test`.
