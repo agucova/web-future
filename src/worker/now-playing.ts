@@ -10,6 +10,10 @@
  *   { playing: false }                                  // nothing to report
  *
  * Design constraints:
+ *   - Music only. Podcast episodes are excluded everywhere: a live episode
+ *     counts as "not live" and falls through to the most recent track, and
+ *     no show name can reach any field. (The recently-played endpoint is
+ *     tracks only, so the history needs no filtering.)
  *   - Never fails towards visitors. Missing secrets, Spotify outages,
  *     malformed payloads and KV errors all degrade to `{ playing: false }`
  *     with a 200, so the caller only has to handle one failure mode.
@@ -20,6 +24,11 @@
  *   - Spotify is called at most once per cache window, not once per visitor.
  *     The shaped response and the access token both live in the NOW_PLAYING
  *     KV namespace.
+ *   - Ghost mode (the `ghost:v1` KV flag) suppresses the integration without
+ *     being observable from outside: no Spotify call is made at all, and the
+ *     last track seen before it was switched on is served with its real
+ *     timestamp, ageing naturally. From a visitor's side that is
+ *     indistinguishable from "he stopped listening after that song".
  */
 import type { Env } from "./env";
 
@@ -71,6 +80,11 @@ const REQUEST_TIMEOUT_MS = 5_000;
 
 const RESPONSE_CACHE_KEY = "response:v1";
 const TOKEN_CACHE_KEY = "token:v1";
+/** Last music track ever shaped. Written with no TTL; ghost mode serves it. */
+const LAST_TRACK_KEY = "last:v1";
+/** Ghost mode switch. Present and set to "on" means "ask Spotify nothing". */
+const GHOST_FLAG_KEY = "ghost:v1";
+const GHOST_ON = "on";
 
 const IDLE: NowPlayingIdle = { playing: false };
 
@@ -89,6 +103,18 @@ interface CachedResponse {
 interface CachedToken {
 	expiresAt: number;
 	accessToken: string;
+}
+
+/**
+ * The frozen entry behind ghost mode: a real past listen, kept indefinitely
+ * so it can still be served months later.
+ */
+interface LastTrack {
+	track: string;
+	artist: string;
+	album?: string;
+	url: string;
+	playedAt: string;
 }
 
 /** Outcome of one Spotify API call. 401 is singled out to trigger a retry. */
@@ -110,18 +136,21 @@ function asText(value: unknown): string | null {
 	return trimmed === "" ? null : trimmed;
 }
 
-/** Joined artist names, or the show name for a podcast episode. */
+/**
+ * Joined artist names. Podcast episodes carry a `show` instead and are
+ * deliberately not handled: an episode has no artist, so it shapes to null
+ * and drops out, and no show name can leak into the response.
+ */
 function readArtist(item: Record<string, unknown>): string | null {
 	const artists = item.artists;
-	if (Array.isArray(artists)) {
-		const names: string[] = [];
-		for (const artist of artists) {
-			const name = asText(asRecord(artist)?.name);
-			if (name !== null) names.push(name);
-		}
-		if (names.length > 0) return names.join(", ");
+	if (!Array.isArray(artists)) return null;
+
+	const names: string[] = [];
+	for (const artist of artists) {
+		const name = asText(asRecord(artist)?.name);
+		if (name !== null) names.push(name);
 	}
-	return asText(asRecord(item.show)?.name);
+	return names.length > 0 ? names.join(", ") : null;
 }
 
 /** The open.spotify.com link, reconstructed from the id when absent. */
@@ -129,10 +158,9 @@ function readUrl(item: Record<string, unknown>): string | null {
 	const external = asText(asRecord(item.external_urls)?.spotify);
 	if (external !== null) return external;
 
+	// Only reached for items already established to be tracks.
 	const id = asText(item.id);
-	const type = asText(item.type);
-	if (id === null || (type !== "track" && type !== "episode")) return null;
-	return `https://open.spotify.com/${type}/${id}`;
+	return id === null ? null : `https://open.spotify.com/track/${id}`;
 }
 
 /** Normalises Spotify's timestamp to ISO, dropping anything unparseable. */
@@ -143,10 +171,15 @@ function readPlayedAt(value: unknown): string | null {
 	return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
 }
 
-/** Reduces a Spotify track or episode object to the public fields. */
+/** Reduces a Spotify track object to the public fields. Music only. */
 function shapeItem(item: unknown): Omit<NowPlayingTrack, "playing"> | null {
 	const record = asRecord(item);
 	if (record === null) return null;
+
+	// Anything Spotify labels as something other than a track (episodes above
+	// all) is refused here, before any of its fields are read.
+	const type = asText(record.type);
+	if (type !== null && type !== "track") return null;
 
 	const track = asText(record.name);
 	const artist = readArtist(record);
@@ -159,15 +192,17 @@ function shapeItem(item: unknown): Omit<NowPlayingTrack, "playing"> | null {
 
 /**
  * Shapes `/v1/me/player/currently-playing`. Returns null when there is no
- * live track to report, which sends the caller on to recently-played:
- * a paused player, an ad break, or an item Spotify won't describe.
+ * live *music* to report, which sends the caller on to recently-played: a
+ * paused player, an ad break, a podcast episode, or an item Spotify won't
+ * describe.
  */
 export function shapeCurrentlyPlaying(payload: unknown): NowPlayingTrack | null {
 	const record = asRecord(payload);
 	if (record === null) return null;
 
+	// Music only: episodes, ads and unknown items are all "nothing live".
 	const type = asText(record.currently_playing_type);
-	if (type !== null && type !== "track" && type !== "episode") return null;
+	if (type !== null && type !== "track") return null;
 	// Paused playback is not liveness; the recent history is a better answer.
 	if (record.is_playing !== true) return null;
 
@@ -246,6 +281,59 @@ async function deleteCachedToken(kv: KVNamespace | undefined): Promise<void> {
 		await kv.delete(TOKEN_CACHE_KEY);
 	} catch {
 		// See writeCachedResponse.
+	}
+}
+
+/**
+ * Remembers the latest music track so ghost mode has something truthful to
+ * freeze on. Live tracks are stamped with the moment they were observed,
+ * which is what makes the frozen entry read as "he stopped listening here".
+ * Deliberately written without a TTL.
+ */
+async function writeLastTrack(kv: KVNamespace, value: NowPlayingTrack): Promise<void> {
+	const playedAt = value.playedAt ?? new Date().toISOString();
+	const entry: LastTrack =
+		value.album === undefined
+			? { track: value.track, artist: value.artist, url: value.url, playedAt }
+			: { track: value.track, artist: value.artist, album: value.album, url: value.url, playedAt };
+	try {
+		await kv.put(LAST_TRACK_KEY, JSON.stringify(entry));
+	} catch {
+		// See writeCachedResponse.
+	}
+}
+
+/** The frozen entry, served as a normal "not playing" response. */
+async function readLastTrack(kv: KVNamespace): Promise<NowPlayingResponse> {
+	try {
+		const stored = await kv.get<LastTrack>(LAST_TRACK_KEY, "json");
+		if (stored === null) return IDLE;
+
+		const track = asText(stored.track);
+		const artist = asText(stored.artist);
+		const url = asText(stored.url);
+		const playedAt = asText(stored.playedAt);
+		if (track === null || artist === null || url === null || playedAt === null) return IDLE;
+
+		const album = asText(stored.album);
+		return album === null
+			? { playing: false, track, artist, url, playedAt }
+			: { playing: false, track, artist, album, url, playedAt };
+	} catch {
+		return IDLE;
+	}
+}
+
+/**
+ * Whether ghost mode is on. An unreadable flag counts as on: staying quiet
+ * during a KV failure is both the private answer and an unremarkable one,
+ * whereas guessing "off" could publish activity that was meant to be hidden.
+ */
+async function isGhostMode(kv: KVNamespace): Promise<boolean> {
+	try {
+		return (await kv.get(GHOST_FLAG_KEY, "text")) === GHOST_ON;
+	} catch {
+		return true;
 	}
 }
 
@@ -366,19 +454,31 @@ async function fetchFromSpotify(
  * Resolves the response, serving the KV cache when it is still fresh. The
  * result is cached whether or not Spotify had anything to say, so a broken
  * integration costs one call per cache window rather than one per visitor.
+ *
+ * Ghost mode is checked first and short-circuits everything: no token, no
+ * Spotify request, and no response-cache write, so nothing about the ghost
+ * period is recorded or transmitted anywhere.
  */
 export async function resolveNowPlaying(env: NowPlayingEnv, doFetch: FetchLike = defaultFetch): Promise<NowPlayingResponse> {
+	const kv = env.NOW_PLAYING;
+
+	if (kv !== undefined && (await isGhostMode(kv))) {
+		return readLastTrack(kv);
+	}
+
 	const credentials = readCredentials(env);
 	if (credentials === null) return IDLE;
 
-	const kv = env.NOW_PLAYING;
 	if (kv !== undefined) {
 		const cached = await readCachedResponse(kv);
 		if (cached !== null) return cached;
 	}
 
 	const resolved = await fetchFromSpotify(credentials, kv, doFetch);
-	if (kv !== undefined) await writeCachedResponse(kv, resolved);
+	if (kv !== undefined) {
+		await writeCachedResponse(kv, resolved);
+		if ("track" in resolved) await writeLastTrack(kv, resolved);
+	}
 	return resolved;
 }
 

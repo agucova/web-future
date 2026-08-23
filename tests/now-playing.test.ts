@@ -38,6 +38,21 @@ const LIVE_TRACK = {
 	},
 };
 
+const NOW_ISO = "2026-08-22T18:04:05.123Z";
+
+/** A podcast episode, which must never surface in any field. */
+const LIVE_EPISODE = {
+	is_playing: true,
+	currently_playing_type: "episode",
+	item: {
+		type: "episode",
+		id: "512ojhOuo1ktJprKbVcKyQ",
+		name: "The one about caching",
+		show: { name: "Some Podcast" },
+		external_urls: { spotify: "https://open.spotify.com/episode/512ojhOuo1ktJprKbVcKyQ" },
+	},
+};
+
 const RECENT_TRACKS = {
 	items: [
 		{
@@ -105,6 +120,15 @@ function envWithCredentials(kv?: unknown): NowPlayingEnv {
 
 const tokenRoute = () => json({ access_token: "access-token", token_type: "Bearer", expires_in: 3600 });
 
+/** What ghost mode freezes on: a real past listen, kept with no TTL. */
+const FROZEN_TRACK = {
+	track: "Ceremony",
+	artist: "New Order",
+	album: "Substance",
+	url: "https://open.spotify.com/track/1AMxLpG6TzJHVvIEIJTNIt",
+	playedAt: "2026-08-20T09:15:00.000Z",
+};
+
 describe("shaping Spotify payloads", () => {
 	test("shapes a live track", () => {
 		expect(shapeCurrentlyPlaying(LIVE_TRACK)).toEqual({
@@ -116,24 +140,26 @@ describe("shaping Spotify payloads", () => {
 		});
 	});
 
-	test("shapes a live podcast episode using the show name", () => {
-		const shaped = shapeCurrentlyPlaying({
-			is_playing: true,
-			currently_playing_type: "episode",
-			item: {
-				type: "episode",
-				id: "512ojhOuo1ktJprKbVcKyQ",
-				name: "The one about caching",
-				show: { name: "Some Podcast" },
-				external_urls: { spotify: "https://open.spotify.com/episode/512ojhOuo1ktJprKbVcKyQ" },
-			},
-		});
-		expect(shaped).toEqual({
-			playing: true,
-			track: "The one about caching",
-			artist: "Some Podcast",
-			url: "https://open.spotify.com/episode/512ojhOuo1ktJprKbVcKyQ",
-		});
+	test("excludes podcast episodes entirely", () => {
+		// Refused on the container marker...
+		expect(shapeCurrentlyPlaying(LIVE_EPISODE)).toBeNull();
+		// ...on the item marker, if the container one were ever wrong...
+		expect(shapeCurrentlyPlaying({ ...LIVE_EPISODE, currently_playing_type: "track" })).toBeNull();
+		// ...and again for want of an artist, with both markers stripped, so a
+		// show name has no path into the response even unlabelled.
+		expect(
+			shapeCurrentlyPlaying({
+				is_playing: true,
+				currently_playing_type: "track",
+				item: {
+					name: LIVE_EPISODE.item.name,
+					show: LIVE_EPISODE.item.show,
+					external_urls: LIVE_EPISODE.item.external_urls,
+				},
+			}),
+		).toBeNull();
+		// A show name must never stand in for an artist.
+		expect(shapeRecentlyPlayed({ items: [{ played_at: NOW_ISO, track: LIVE_EPISODE.item }] })).toBeNull();
 	});
 
 	test("reconstructs the url from the id when external_urls is absent", () => {
@@ -210,6 +236,69 @@ describe("resolving the endpoint response", () => {
 		const resolved = await resolveNowPlaying(envWithCredentials(), fetchLike);
 		expect(resolved).toMatchObject({ playing: false, track: "Ceremony", playedAt: "2026-08-22T18:04:05.123Z" });
 		expect(calls).toEqual([TOKEN_URL, CURRENT_URL, RECENT_URL]);
+	});
+
+	test("falls through to the most recent music track while a podcast plays", async () => {
+		const { fetchLike, calls } = stubFetch({
+			[TOKEN_URL]: tokenRoute,
+			[CURRENT_URL]: () => json(LIVE_EPISODE),
+			[RECENT_URL]: () => json(RECENT_TRACKS),
+		});
+
+		const resolved = await resolveNowPlaying(envWithCredentials(), fetchLike);
+		expect(resolved).toMatchObject({ playing: false, track: "Ceremony", artist: "New Order, Joy Division" });
+		// Nothing about the episode may appear anywhere in the response.
+		expect(JSON.stringify(resolved)).not.toContain("Podcast");
+		expect(JSON.stringify(resolved)).not.toContain("caching");
+		expect(calls).toEqual([TOKEN_URL, CURRENT_URL, RECENT_URL]);
+	});
+
+	test("remembers a live track, stamped with the moment it was seen", async () => {
+		const kv = stubKv();
+		const before = Date.now();
+		const { fetchLike } = stubFetch({
+			[TOKEN_URL]: tokenRoute,
+			[CURRENT_URL]: () => json(LIVE_TRACK),
+		});
+
+		await resolveNowPlaying(envWithCredentials(kv.namespace), fetchLike);
+
+		const stored = JSON.parse(kv.store.get("last:v1") ?? "null");
+		expect(stored).toMatchObject({
+			track: "Blue Monday",
+			artist: "New Order",
+			album: "Substance",
+			url: TRACK_URL,
+		});
+		expect(stored.playing).toBeUndefined();
+		expect(Date.parse(stored.playedAt)).toBeGreaterThanOrEqual(before);
+	});
+
+	test("remembers a recently played track with its own timestamp", async () => {
+		const kv = stubKv();
+		const { fetchLike } = stubFetch({
+			[TOKEN_URL]: tokenRoute,
+			[CURRENT_URL]: () => new Response(null, { status: 204 }),
+			[RECENT_URL]: () => json(RECENT_TRACKS),
+		});
+
+		await resolveNowPlaying(envWithCredentials(kv.namespace), fetchLike);
+
+		expect(JSON.parse(kv.store.get("last:v1") ?? "null").playedAt).toBe(NOW_ISO);
+	});
+
+	test("leaves the remembered track alone when there is nothing to report", async () => {
+		const kv = stubKv();
+		kv.store.set("last:v1", JSON.stringify(FROZEN_TRACK));
+		const { fetchLike } = stubFetch({
+			[TOKEN_URL]: tokenRoute,
+			[CURRENT_URL]: () => new Response(null, { status: 204 }),
+			[RECENT_URL]: () => json({ items: [] }),
+		});
+
+		await resolveNowPlaying(envWithCredentials(kv.namespace), fetchLike);
+
+		expect(JSON.parse(kv.store.get("last:v1") ?? "null")).toEqual(FROZEN_TRACK);
 	});
 
 	test("reports nothing playing when the integration is unconfigured", async () => {
@@ -298,6 +387,101 @@ describe("resolving the endpoint response", () => {
 		await resolveNowPlaying(envWithCredentials(kv.namespace), fetchLike);
 
 		expect(calls).toEqual([TOKEN_URL, CURRENT_URL, CURRENT_URL]);
+	});
+});
+
+describe("ghost mode", () => {
+	/** A namespace with the flag on, optionally holding a frozen entry. */
+	function ghostKv(frozen?: unknown) {
+		const kv = stubKv();
+		kv.store.set("ghost:v1", "on");
+		if (frozen !== undefined) kv.store.set("last:v1", JSON.stringify(frozen));
+		return kv;
+	}
+
+	/** Any call at all would be a leak, so the stub refuses every route. */
+	const forbiddenFetch = async (url: string): Promise<Response> => {
+		throw new Error(`Ghost mode must not call Spotify, but it requested ${url}`);
+	};
+
+	test("serves the frozen entry with its original timestamp and no Spotify call", async () => {
+		const kv = ghostKv(FROZEN_TRACK);
+
+		const resolved = await resolveNowPlaying(envWithCredentials(kv.namespace), forbiddenFetch);
+
+		expect(resolved).toEqual({ playing: false, ...FROZEN_TRACK });
+	});
+
+	test("makes no Spotify call at all", async () => {
+		const kv = ghostKv(FROZEN_TRACK);
+		const { fetchLike, calls } = stubFetch({
+			[TOKEN_URL]: tokenRoute,
+			[CURRENT_URL]: () => json(LIVE_TRACK),
+			[RECENT_URL]: () => json(RECENT_TRACKS),
+		});
+
+		await resolveNowPlaying(envWithCredentials(kv.namespace), fetchLike);
+
+		expect(calls).toEqual([]);
+		// Nothing about the ghost period is recorded either.
+		expect(kv.store.has("response:v1")).toBe(false);
+		expect(kv.store.has("token:v1")).toBe(false);
+	});
+
+	test("reports nothing when there is no remembered track", async () => {
+		const kv = ghostKv();
+		expect(await resolveNowPlaying(envWithCredentials(kv.namespace), forbiddenFetch)).toEqual({ playing: false });
+	});
+
+	test("overrides a live answer still sitting in the response cache", async () => {
+		const kv = ghostKv(FROZEN_TRACK);
+		kv.store.set(
+			"response:v1",
+			JSON.stringify({
+				expiresAt: Date.now() + 30_000,
+				value: { playing: true, track: "Blue Monday", artist: "New Order", url: TRACK_URL },
+			}),
+		);
+
+		const resolved = await resolveNowPlaying(envWithCredentials(kv.namespace), forbiddenFetch);
+
+		expect(resolved).toEqual({ playing: false, ...FROZEN_TRACK });
+	});
+
+	test("stays on even without Spotify credentials", async () => {
+		const kv = ghostKv(FROZEN_TRACK);
+		const resolved = await resolveNowPlaying({ NOW_PLAYING: kv.namespace } as unknown as NowPlayingEnv, forbiddenFetch);
+		expect(resolved).toEqual({ playing: false, ...FROZEN_TRACK });
+	});
+
+	test("treats an unreadable flag as ghost mode rather than risking a leak", async () => {
+		const broken = {
+			async get(): Promise<never> {
+				throw new Error("KV unavailable");
+			},
+			async put(): Promise<void> {},
+			async delete(): Promise<void> {},
+		};
+
+		const resolved = await resolveNowPlaying(
+			envWithCredentials(broken),
+			forbiddenFetch,
+		);
+
+		expect(resolved).toEqual({ playing: false });
+	});
+
+	test("answers with the same headers as any other response", async () => {
+		const kv = ghostKv(FROZEN_TRACK);
+		const response = await handleNowPlayingRequest(
+			new Request("https://agucova.dev/api/now-playing"),
+			envWithCredentials(kv.namespace),
+		);
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get("content-type")).toBe("application/json");
+		expect(response.headers.get("cache-control")).toBe("public, max-age=30");
+		expect(await response.json()).toEqual({ playing: false, ...FROZEN_TRACK });
 	});
 });
 
