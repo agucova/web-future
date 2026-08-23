@@ -4,18 +4,18 @@ Everything here is public key material, served from my own domain. Nothing on th
 
 ## Encrypt something to me
 
-[age](https://age-encryption.org) is the preferred way. Use my default recipient, a hybrid of X25519 and ML-KEM. An attacker has to break both halves, so it is at least as strong as X25519 on its own, and it also covers the case where today's ciphertext is stored and attacked years from now. It needs age 1.3 or newer, which handles it for both encryption and decryption.
+[age](https://age-encryption.org) is the easiest way to send me something private. My default key is a hybrid post-quantum one, so you will need age 1.3 or newer. It mixes ordinary and post-quantum cryptography, which keeps your message private even if someone saves it today and tries to crack it decades from now.
 
 ```
 # encrypt a file to me
-curl -s https://agucova.dev/age-pq.txt | age -R - -o secret.age file.pdf
+curl -s https://agucova.dev/age.txt | age -R - -o secret.age file.pdf
 ```
 
-The recipient is about 2 KB (ML-KEM public keys are large), so it is served on its own at <https://agucova.dev/age-pq.txt> rather than inlined here.
+The recipient is about 2 KB (ML-KEM public keys are large), so it is served on its own at <https://agucova.dev/age.txt> rather than inlined here.
 
 ### Classic X25519, for older tooling
 
-If you are on age older than 1.3, or on something else that does not speak ML-KEM, encrypt to my classic X25519 recipient instead. It is short enough to paste:
+If your age is older than 1.3, or your tool does not know about the post-quantum key yet, use this one instead. It is short enough to paste:
 
 ```
 age187ce86uaqypfhmz55rfy630s9dp9v6s0v028mgf554m0094tmdcqw3fufl
@@ -23,7 +23,7 @@ age187ce86uaqypfhmz55rfy630s9dp9v6s0v028mgf554m0094tmdcqw3fufl
 
 ```
 # same thing, classic recipient
-curl -s https://agucova.dev/age.txt | age -R - -o secret.age file.pdf
+curl -s https://agucova.dev/age-classic.txt | age -R - -o secret.age file.pdf
 ```
 
 ### With my SSH keys instead

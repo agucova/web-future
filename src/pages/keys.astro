@@ -28,15 +28,14 @@ const PGP_FINGERPRINT = "503B 2899 F90F 9FE5 BF33 1E3C D0B5 DA36 0A0D A1E0";
 
     <p>
         <a href="https://age-encryption.org" rel="noopener noreferrer">age</a> is
-        the preferred way. Use my default recipient, a hybrid of X25519 and
-        ML-KEM. An attacker has to break both halves, so it is at least as
-        strong as X25519 on its own, and it also covers the case where today's
-        ciphertext is stored and attacked years from now. It needs age 1.3 or
-        newer, which handles it for both encryption and decryption.
+        the easiest way to send me something private. My default key is a hybrid
+        post-quantum one, so you will need age 1.3 or newer. It mixes ordinary
+        and post-quantum cryptography, which keeps your message private even if
+        someone saves it today and tries to crack it decades from now.
     </p>
 
     <pre><code># encrypt a file to me
-curl -s https://agucova.dev/age-pq.txt | age -R - -o secret.age file.pdf</code></pre>
+curl -s https://agucova.dev/age.txt | age -R - -o secret.age file.pdf</code></pre>
 
     <details>
         <summary>The recipient itself (about 2 KB, ML-KEM public keys are large)</summary>
@@ -46,15 +45,14 @@ curl -s https://agucova.dev/age-pq.txt | age -R - -o secret.age file.pdf</code><
     <h3>Classic X25519, for older tooling</h3>
 
     <p>
-        If you are on age older than 1.3, or on something else that does not
-        speak ML-KEM, encrypt to my classic X25519 recipient instead. It is
-        short enough to paste:
+        If your age is older than 1.3, or your tool does not know about the
+        post-quantum key yet, use this one instead. It is short enough to paste:
     </p>
 
     <pre><code>{AGE_CLASSIC}</code></pre>
 
     <pre><code># same thing, classic recipient
-curl -s https://agucova.dev/age.txt | age -R - -o secret.age file.pdf</code></pre>
+curl -s https://agucova.dev/age-classic.txt | age -R - -o secret.age file.pdf</code></pre>
 
     <h3>With my SSH keys instead</h3>
 
@@ -141,7 +139,7 @@ ssh-keygen -Y verify -f allowed_signers -I agustin@agucova.dev \
                 });
         };
 
-        loadInto(".key-wrapper", "/age-pq.txt");
+        loadInto(".key-wrapper", "/age.txt");
         loadInto(".pgp-wrapper", "/pgp.asc");
     </script>
 
