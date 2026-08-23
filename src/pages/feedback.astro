@@ -14,7 +14,7 @@ const description = "Send me anonymous, end-to-end encrypted feedback.";
     <p>
         This form is <strong>anonymous by construction</strong>: your message
         is encrypted in your browser to my public key, so I can't tell who
-        sent it — and the server never sees plaintext.
+        sent it, and the server never sees plaintext.
     </p>
 
     <details>
@@ -34,7 +34,7 @@ const description = "Send me anonymous, end-to-end encrypted feedback.";
             trusting the code this site serves you).
         </p>
         <p>
-            Since it's anonymous, I can't reply — include contact info if
+            Since it's anonymous, I can't reply, so include contact info if
             you'd like a response. Messages relay in real time, so I can see
             roughly <em>when</em> one arrives; if that timing alone could
             identify you, hold your message and send it later.
@@ -253,7 +253,44 @@ const description = "Send me anonymous, end-to-end encrypted feedback.";
 
         form button[type="submit"] {
             display: block;
-            margin-top: 1em;
+            margin-top: 1.25em;
+            padding: 0.6em 1.5em;
+            background: transparent;
+            color: var(--links, #3b82c4);
+            border: 1px solid
+                color-mix(in srgb, var(--links, #3b82c4) 50%, transparent);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition:
+                background-color 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.05s ease;
+        }
+
+        form button[type="submit"]:hover {
+            background: color-mix(
+                in srgb,
+                var(--links, #3b82c4) 12%,
+                transparent
+            );
+            border-color: var(--links, #3b82c4);
+        }
+
+        form button[type="submit"]:active {
+            transform: translateY(1px);
+        }
+
+        form button[type="submit"]:focus-visible {
+            outline: 2px solid var(--focus, #7dbaff);
+            outline-offset: 2px;
+        }
+
+        form button[type="submit"]:disabled {
+            opacity: 0.6;
+            cursor: default;
+            filter: none;
         }
 
         /* Honeypot: visually removed, but still present for bots that
