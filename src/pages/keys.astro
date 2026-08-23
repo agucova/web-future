@@ -28,30 +28,33 @@ const PGP_FINGERPRINT = "503B 2899 F90F 9FE5 BF33 1E3C D0B5 DA36 0A0D A1E0";
 
     <p>
         <a href="https://age-encryption.org" rel="noopener noreferrer">age</a> is
-        the preferred way. My recipient is:
+        the preferred way. Use my default recipient, a hybrid of X25519 and
+        ML-KEM. An attacker has to break both halves, so it is at least as
+        strong as X25519 on its own, and it also covers the case where today's
+        ciphertext is stored and attacked years from now. It needs age 1.3 or
+        newer, which handles it for both encryption and decryption.
+    </p>
+
+    <pre><code># encrypt a file to me
+curl -s https://agucova.dev/age-pq.txt | age -R - -o secret.age file.pdf</code></pre>
+
+    <details>
+        <summary>The recipient itself (about 2 KB, ML-KEM public keys are large)</summary>
+        <textarea class="key-wrapper" rows="10" readonly="true" onclick="this.focus();this.select()"></textarea>
+    </details>
+
+    <h3>Classic X25519, for older tooling</h3>
+
+    <p>
+        If you are on age older than 1.3, or on something else that does not
+        speak ML-KEM, encrypt to my classic X25519 recipient instead. It is
+        short enough to paste:
     </p>
 
     <pre><code>{AGE_CLASSIC}</code></pre>
 
-    <pre><code># encrypt a file to me
+    <pre><code># same thing, classic recipient
 curl -s https://agucova.dev/age.txt | age -R - -o secret.age file.pdf</code></pre>
-
-    <h3>Post-quantum</h3>
-
-    <p>
-        I also publish a hybrid X25519 and ML-KEM recipient. Encrypting to it
-        means an attacker has to break both the classical and the post-quantum
-        half, which covers the case where today's ciphertext is stored and
-        attacked years from now. It needs age 1.3 or newer.
-    </p>
-
-    <pre><code># same thing, post-quantum
-curl -s https://agucova.dev/age-pq.txt | age -R - -o secret.age file.pdf</code></pre>
-
-    <details>
-        <summary>The post-quantum recipient (about 2 KB, ML-KEM keys are large)</summary>
-        <textarea class="key-wrapper" rows="10" readonly="true" onclick="this.focus();this.select()"></textarea>
-    </details>
 
     <h3>With my SSH keys instead</h3>
 
