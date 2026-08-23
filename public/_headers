@@ -1,6 +1,16 @@
 /*
   Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.fontawesome.com https://fonts.googleapis.com https://fonts.gstatic.com https://assets.calendly.com https://calendly.com https://embed.savvycal.com https://challenges.cloudflare.com https://*.basemaps.cartocdn.com https://*.carto.com; frame-src https://calendly.com https://savvycal.com https://challenges.cloudflare.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.carto.com https://*.openstreetmap.org; media-src 'self'
 
+# The asset server types .md and .txt without a charset in production, so
+# browsers fall back to a legacy encoding and mangle every non-ASCII character.
+# The Worker sets charset itself on negotiated responses; these rules cover the
+# standalone files it never touches.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
 # /feedback handles plaintext-before-encryption in the DOM: only Turnstile
 # may load beside first-party code. Both this policy and /* apply (browsers
 # enforce the intersection, which equals this stricter one). The splat also
