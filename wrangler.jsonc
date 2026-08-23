@@ -1,9 +1,9 @@
 // Cloudflare Worker serving the whole site: the static Astro build (dist/)
 // plus dynamic endpoints (POST /api/feedback, GET /api/now-playing).
 //
-// No routes/custom domains here yet: first deploys go to workers.dev, and
-// the agucova.dev cutover from the old Pages project is done manually in
-// the dashboard afterwards (see DEPLOY.md).
+// The agucova.dev custom domain is attached to this Worker in the Cloudflare
+// dashboard rather than declared here, and pushes to main deploy through
+// Workers Builds (see DEPLOY.md).
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "agucova-dev",
