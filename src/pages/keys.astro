@@ -1,0 +1,160 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = "Keys";
+const description = "My public keys: age for encryption, SSH for signatures, Ariadne for identity, PGP for compatibility.";
+
+// Only public key material ever appears on this page. Secrets live in 1Password.
+const AGE_CLASSIC = "age187ce86uaqypfhmz55rfy630s9dp9v6s0v028mgf554m0094tmdcqw3fufl";
+const ASPE_URI = "aspe:keyoxide.org:OINESA65LDHLH6SKFODDDIQXZM";
+const KEYOXIDE_PROFILE = `https://keyoxide.org/${ASPE_URI}`;
+const GIST_PROOF = "https://gist.github.com/agucova/13feec4b34b49d1a78abe49f8d01c59a";
+const PGP_FINGERPRINT = "503B 2899 F90F 9FE5 BF33 1E3C D0B5 DA36 0A0D A1E0";
+---
+
+<Layout title={title} description={description}>
+    <h1>{title}</h1>
+
+    <p>
+        Everything here is public key material, served from my own domain.
+        Nothing on this page is secret, and every secret half lives offline.
+        If you want to send me something private, use <a href="#encrypt">age</a>.
+        If you want to check that something came from me, use
+        <a href="#signatures">my SSH signing keys</a>. If you want to check that
+        this page is really mine, see <a href="#identity">identity</a>.
+    </p>
+
+    <h2 id="encrypt">Encrypt something to me</h2>
+
+    <p>
+        <a href="https://age-encryption.org" rel="noopener noreferrer">age</a> is
+        the preferred way. My recipient is:
+    </p>
+
+    <pre><code>{AGE_CLASSIC}</code></pre>
+
+    <pre><code># encrypt a file to me
+curl -s https://agucova.dev/age.txt | age -R - -o secret.age file.pdf</code></pre>
+
+    <h3>Post-quantum</h3>
+
+    <p>
+        I also publish a hybrid X25519 and ML-KEM recipient. Encrypting to it
+        means an attacker has to break both the classical and the post-quantum
+        half, which covers the case where today's ciphertext is stored and
+        attacked years from now. It needs age 1.3 or newer.
+    </p>
+
+    <pre><code># same thing, post-quantum
+curl -s https://agucova.dev/age-pq.txt | age -R - -o secret.age file.pdf</code></pre>
+
+    <details>
+        <summary>The post-quantum recipient (about 2 KB, ML-KEM keys are large)</summary>
+        <textarea class="key-wrapper" rows="10" readonly="true" onclick="this.focus();this.select()"></textarea>
+    </details>
+
+    <h3>With my SSH keys instead</h3>
+
+    <p>
+        age also accepts SSH public keys as recipients, so you can encrypt to me
+        with nothing but my GitHub username.
+    </p>
+
+    <pre><code>curl -s https://github.com/agucova.keys &gt; agus.keys
+age -R agus.keys -o secret.age file.pdf</code></pre>
+
+    <h3>For a conversation</h3>
+
+    <p>
+        Static keys are for files and one-off messages. For an actual
+        conversation, use <a href="https://signal.org/">Signal</a>:
+        <code>@agucova.42</code>.
+    </p>
+
+    <h2 id="identity">Identity</h2>
+
+    <p>
+        My accounts are tied together with an
+        <a href="https://docs.keyoxide.org/wiki/ariadne-identity/" rel="noopener noreferrer">Ariadne</a>
+        profile, which you can verify with
+        <a href={KEYOXIDE_PROFILE} rel="noopener noreferrer">Keyoxide</a> or any
+        other implementation. Verification is a public algorithm: each claimed
+        account publishes a link back to the profile, and you can check those
+        links yourself without trusting me or Keyoxide.
+    </p>
+
+    <pre><code>{ASPE_URI}</code></pre>
+
+    <p>The backlinks, if you want to check them by hand:</p>
+
+    <ul>
+        <li>This domain: <code>dig +short TXT agucova.dev</code></li>
+        <li>GitHub: <a href={GIST_PROOF} rel="noopener noreferrer">gist</a></li>
+    </ul>
+
+    <h2 id="signatures">Verify something I signed</h2>
+
+    <p>
+        I sign with SSH keys. One key per device, all of them listed in
+        <a href="/allowed_signers">allowed_signers</a>, and also available at
+        <a href="https://github.com/agucova.keys" rel="noopener noreferrer">github.com/agucova.keys</a>.
+    </p>
+
+    <pre><code>curl -sO https://agucova.dev/allowed_signers
+ssh-keygen -Y verify -f allowed_signers -I agustin@agucova.dev \
+    -n file -s document.pdf.sig &lt; document.pdf</code></pre>
+
+    <h2>PGP</h2>
+
+    <p>
+        My PGP key still works and I still read encrypted mail, but I would
+        rather you used age. I keep it for people and tools that only speak
+        OpenPGP. It is the same key I have used since 2021, and I do not plan to
+        replace it.
+    </p>
+
+    <p>Fingerprint: <code>{PGP_FINGERPRINT}</code></p>
+
+    <pre><code>curl https://agucova.dev/pgp.asc | gpg --import</code></pre>
+
+    <details>
+        <summary>The key itself</summary>
+        <textarea class="pgp-wrapper" rows="15" readonly="true" onclick="this.focus();this.select()"></textarea>
+    </details>
+
+    <script>
+        // Bulky key material is fetched instead of inlined, so the page stays
+        // small for the majority of visitors who never open these.
+        const loadInto = (selector: string, path: string) => {
+            const target = document.querySelector(selector);
+            if (!target) return;
+            fetch(path)
+                .then((response) => response.text())
+                .then((text) => {
+                    target.textContent = text.trim();
+                })
+                .catch(() => {
+                    target.textContent = `Could not load ${path}. Try opening it directly.`;
+                });
+        };
+
+        loadInto(".key-wrapper", "/age-pq.txt");
+        loadInto(".pgp-wrapper", "/pgp.asc");
+    </script>
+
+    <style>
+        textarea.key-wrapper,
+        textarea.pgp-wrapper {
+            width: 100%;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 0.8rem;
+            white-space: pre;
+        }
+
+        pre code {
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</Layout>
