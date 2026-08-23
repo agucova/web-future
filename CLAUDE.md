@@ -20,8 +20,8 @@ Personal website (agucova.dev). Astro 5 static site with Svelte 5 islands and Ta
 - `astro.config.mjs`: Astro configuration
 
 ## Deployment
-- Cloudflare Pages via Git integration: every push to `main` deploys.
-- Do not push unless the change is meant to go live.
+- Target: a single Cloudflare Worker (`agucova-dev`) serving static assets from `dist/` plus `/api/*` endpoints (see `wrangler.jsonc` and DEPLOY.md). Deploys are manual via `wrangler deploy` with 1Password-scoped credentials — never `wrangler login` (see DEPLOY.md).
+- Until the domain cutover in DEPLOY.md happens, the live site is still the legacy Cloudflare Pages project, deployed by every push to `main`. Do not push unless the change is meant to go live.
 
 ## Conventions
 - Conventional commits (feat:/fix:/docs:/style:/refactor:/chore:/ci:)

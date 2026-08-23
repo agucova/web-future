@@ -21,5 +21,11 @@ jobs:
       - name: Type check
         run: bunx astro check
 
+      - name: Type check (worker)
+        run: bun run check:worker
+
+      - name: Test
+        run: bun test
+
       - name: Build
         run: bun run build
