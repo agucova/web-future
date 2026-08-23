@@ -10,11 +10,11 @@
  * browser, before anything leaves the page. age recipients are public by
  * design, so embedding this in client-side code is safe.
  *
- * PLACEHOLDER: replace with the real recipient once the key is generated
- * offline (`age-keygen -o feedback.key` prints the matching "age1..."
- * public key). The form refuses to submit while this placeholder is in place.
+ * The matching decryption secret lives only in 1Password
+ * (op://Private/zba2amz2hrfsjc3zbfgq7776zq/age_feedback_key) — see DEPLOY.md.
  */
-export const AGE_RECIPIENT = "age1REPLACEME";
+export const AGE_RECIPIENT =
+	"age1jd2nt7k67s4jw4qu0xt8g00ah202uyq9u2cql653yj2gpdfznqvs7c8f6p";
 
 /**
  * Cloudflare Turnstile site key rendered on the form page.

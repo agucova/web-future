@@ -86,15 +86,19 @@ cfwrangler secret put TURNSTILE_SECRET
 
 (Locally, `.dev.vars` holds the dummy always-pass secret instead.)
 
-### 5. Swap the real constants in the site
+### 5. Swap the real Turnstile sitekey in the site
 
-In [`src/lib/feedback/config.ts`](src/lib/feedback/config.ts):
+In [`src/lib/feedback/config.ts`](src/lib/feedback/config.ts), set
+`TURNSTILE_SITE_KEY` to the real widget sitekey from step 3.
 
-- `TURNSTILE_SITE_KEY` → the real widget sitekey from step 3.
-- `AGE_RECIPIENT` → the real age public key. Generate the keypair **offline**
-  (`age-keygen -o feedback.key` prints the `age1...` recipient; keep
-  `feedback.key` out of this repo and backed up somewhere safe). The form
-  refuses to submit while the `age1REPLACEME` placeholder is present.
+`AGE_RECIPIENT` is already the real public key. The matching decryption
+secret lives only in 1Password at
+`op://Private/zba2amz2hrfsjc3zbfgq7776zq/age_feedback_key`; to decrypt a
+received message:
+
+```fish
+op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/age_feedback_key" | age -d -i - message.age
+```
 
 ### 6. Build and deploy
 
@@ -106,7 +110,7 @@ cfwrangler deploy
 Smoke test on the workers.dev URL, then decrypt the received email:
 
 ```fish
-age -d -i feedback.key message.age
+op read "op://Private/zba2amz2hrfsjc3zbfgq7776zq/age_feedback_key" | age -d -i - message.age
 ```
 
 ## Runbook: domain cutover from Pages

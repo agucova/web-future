@@ -115,13 +115,6 @@ const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            if (AGE_RECIPIENT === "age1REPLACEME") {
-                setStatus(
-                    "This form isn't live yet (no encryption key configured). Please check back later.",
-                );
-                return;
-            }
-
             const data = new FormData(form);
             const message = String(data.get("message") ?? "").trim();
             const about = String(data.get("about") ?? "").trim();
