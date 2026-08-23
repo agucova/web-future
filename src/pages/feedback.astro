@@ -1,0 +1,256 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { TURNSTILE_SITE_KEY } from '$lib/feedback/config';
+
+const title = "Feedback";
+const description = "🕵️ Send me anonymous, end-to-end encrypted feedback.";
+---
+
+<Layout title={title} description={description}>
+    <h1>{title}</h1>
+
+    <p>
+        Got feedback for me? Praise, criticism, something I should know —
+        I want to hear it, especially if it's awkward to say to my face.
+    </p>
+    <p>
+        This form is <strong>anonymous by construction</strong>: your message
+        is encrypted <em>in your browser</em> (using
+        <a href="https://age-encryption.org" rel="noopener noreferrer">age</a>)
+        to my public key before it leaves the page. The server only ever sees
+        ciphertext, stores nothing, and doesn't record your IP address — the
+        encrypted message is relayed straight to my inbox, where only I can
+        decrypt it. If you don't trust me on that, the
+        <a
+            href="https://github.com/agucova/web"
+            rel="noopener noreferrer">code is public</a
+        >.
+    </p>
+    <p>
+        Since it's anonymous, I can't reply — include contact info in the
+        message if you'd like a response.
+    </p>
+
+    <noscript>
+        <p>
+            <strong>This form needs JavaScript</strong> — the encryption
+            happens in your browser, so there's no way around it. If you'd
+            rather not enable it, you can PGP-encrypt an email to me instead
+            (see <a href="/pgp">/pgp</a>).
+        </p>
+    </noscript>
+
+    <form id="feedback-form" hidden>
+        <label for="about">Who or what is this about? (optional)</label>
+        <input
+            type="text"
+            id="about"
+            name="about"
+            maxlength="200"
+            placeholder="e.g. a talk I gave, Kairos, me in general"
+        />
+
+        <label for="message">Your feedback</label>
+        <textarea
+            id="message"
+            name="message"
+            rows="8"
+            maxlength="10000"
+            required
+            placeholder="Say anything. I mean it."></textarea>
+
+        <div class="hp-field" aria-hidden="true">
+            <label for="website">Leave this field empty</label>
+            <input
+                type="text"
+                id="website"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+            />
+        </div>
+
+        <!-- Turnstile, kept low profile: with appearance=interaction-only the
+             widget stays invisible unless Cloudflare needs the visitor to
+             interact (rare); the token is fetched silently in the background. -->
+        <div
+            class="cf-turnstile"
+            data-sitekey={TURNSTILE_SITE_KEY}
+            data-appearance="interaction-only"
+            data-theme="auto"></div>
+
+        <button type="submit" id="feedback-submit">Send anonymously</button>
+    </form>
+
+    <p id="feedback-status" role="status" aria-live="polite"></p>
+
+    <script
+        is:inline
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer></script>
+
+    <script>
+        import { Encrypter, armor } from "age-encryption";
+        import { AGE_RECIPIENT } from "$lib/feedback/config";
+
+        const form = document.getElementById(
+            "feedback-form",
+        ) as HTMLFormElement;
+        const status = document.getElementById(
+            "feedback-status",
+        ) as HTMLParagraphElement;
+        const submitButton = document.getElementById(
+            "feedback-submit",
+        ) as HTMLButtonElement;
+
+        // The form is hidden by default so that no-JS visitors see the
+        // <noscript> explanation instead of a form that can't work.
+        form.hidden = false;
+
+        function setStatus(message: string) {
+            status.textContent = message;
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (AGE_RECIPIENT === "age1REPLACEME") {
+                setStatus(
+                    "This form isn't live yet (no encryption key configured). Please check back later.",
+                );
+                return;
+            }
+
+            const data = new FormData(form);
+            const message = String(data.get("message") ?? "").trim();
+            const about = String(data.get("about") ?? "").trim();
+            const honeypot = String(data.get("website") ?? "");
+
+            if (!message) {
+                setStatus("Please write a message first.");
+                return;
+            }
+
+            // The Turnstile token is normally fetched invisibly in the
+            // background; if it isn't ready yet, wait for it briefly rather
+            // than bothering the visitor about a widget they can't see.
+            let turnstileToken = String(
+                new FormData(form).get("cf-turnstile-response") ?? "",
+            );
+            if (!turnstileToken) {
+                setStatus("Checking you're human…");
+                for (let i = 0; i < 60 && !turnstileToken; i++) {
+                    await new Promise((resolve) => setTimeout(resolve, 250));
+                    turnstileToken = String(
+                        new FormData(form).get("cf-turnstile-response") ?? "",
+                    );
+                }
+                if (!turnstileToken) {
+                    setStatus(
+                        "The human check didn't complete — if a challenge appeared below, please finish it and submit again.",
+                    );
+                    return;
+                }
+            }
+
+            submitButton.disabled = true;
+            setStatus("Encrypting…");
+
+            try {
+                const plaintext = about
+                    ? `About: ${about}\n\n${message}`
+                    : message;
+
+                const encrypter = new Encrypter();
+                encrypter.addRecipient(AGE_RECIPIENT);
+                const ciphertext = armor.encode(
+                    await encrypter.encrypt(plaintext),
+                );
+
+                if (ciphertext.length > 30_000) {
+                    setStatus(
+                        "That message is too long to send — please trim it down.",
+                    );
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                setStatus("Sending…");
+                const response = await fetch("/api/feedback", {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({
+                        ciphertext,
+                        turnstileToken,
+                        website: honeypot,
+                    }),
+                });
+
+                if (response.status === 204) {
+                    form.reset();
+                    form.hidden = true;
+                    setStatus(
+                        "Sent! Your encrypted message is on its way. Thank you — I read everything.",
+                    );
+                } else {
+                    let detail = "";
+                    try {
+                        const body = (await response.json()) as {
+                            error?: string;
+                        };
+                        detail = body.error ?? "";
+                    } catch {
+                        /* non-JSON error body */
+                    }
+                    setStatus(
+                        detail
+                            ? `Something went wrong: ${detail}`
+                            : `Something went wrong (HTTP ${response.status}). Please try again.`,
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+                setStatus(
+                    "Something went wrong on this page (nothing was sent). Please try again.",
+                );
+            } finally {
+                submitButton.disabled = false;
+                // Turnstile tokens are single-use; get a fresh one for retries.
+                window.turnstile?.reset();
+            }
+        });
+    </script>
+
+    <style>
+        form label {
+            display: block;
+            margin-top: 1em;
+        }
+
+        form input[type="text"],
+        form textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .cf-turnstile {
+            margin-top: 1em;
+        }
+
+        form button[type="submit"] {
+            display: block;
+            margin-top: 1em;
+        }
+
+        /* Honeypot: visually removed, but still present for bots that
+           fill in every field. Real users never see or focus it. */
+        .hp-field {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+    </style>
+</Layout>

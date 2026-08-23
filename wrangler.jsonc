@@ -1,0 +1,35 @@
+// Cloudflare Worker serving the whole site: the static Astro build (dist/)
+// plus dynamic endpoints (currently POST /api/feedback).
+//
+// No routes/custom domains here yet: first deploys go to workers.dev, and
+// the agucova.dev cutover from the old Pages project is done manually in
+// the dashboard afterwards (see DEPLOY.md).
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "agucova-dev",
+	"main": "src/worker/index.ts",
+	"compatibility_date": "2026-08-01",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+		// No "not_found_handling": the Astro build has no 404.html, so the
+		// default (plain 404 response) applies. If a 404 page is added
+		// later, set "not_found_handling": "404-page".
+	},
+	// Email Sending binding used by /api/feedback. The from-domain
+	// (agucova.dev) must be onboarded via `wrangler email sending enable
+	// agucova.dev` before feedback delivery works.
+	"send_email": [
+		{
+			"name": "EMAIL",
+			"allowed_sender_addresses": ["feedback@agucova.dev"],
+			"allowed_destination_addresses": ["agucova@gmail.com"]
+		}
+	],
+	// Observability stays disabled on purpose: the feedback endpoint must
+	// not record anything about senders, and Workers Logs would capture
+	// invocation metadata. Do not enable.
+	"observability": {
+		"enabled": false
+	}
+}

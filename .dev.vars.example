@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local `wrangler dev`.
+# The value below is Cloudflare's dummy "always passes" Turnstile secret —
+# fine for local testing, useless in production. The real secret is a Worker
+# secret set via `wrangler secret put TURNSTILE_SECRET` (see README.md).
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
