@@ -21,4 +21,17 @@ export interface Env {
 	SPOTIFY_CLIENT_ID?: string;
 	SPOTIFY_CLIENT_SECRET?: string;
 	SPOTIFY_REFRESH_TOKEN?: string;
+	/**
+	 * Opt-in gate and DNS answer cache for GET /api/where. Deliberately its
+	 * own namespace rather than a second key in NOW_PLAYING: the location
+	 * switch and the Spotify ghost switch must be impossible to confuse.
+	 * Optional so that a missing binding means silence rather than a crash
+	 * (see src/worker/where.ts).
+	 */
+	WHERE?: KVNamespace;
+	/**
+	 * Development-only override of the DNS name /api/where reads. Unset in
+	 * production. It selects a name to resolve, and cannot supply an answer.
+	 */
+	WHERE_NAME?: string;
 }

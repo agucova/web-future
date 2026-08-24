@@ -1,7 +1,7 @@
 /**
  * Worker entry point for agucova.dev: serves the static Astro build and
  * routes API endpoints. Future dynamic endpoints slot in beside
- * /api/feedback and /api/now-playing here.
+ * /api/feedback, /api/now-playing and /api/where here.
  *
  * Only the paths in `assets.run_worker_first` (wrangler.jsonc) reach this
  * handler: the API, and the page URLs that negotiate between HTML and their
@@ -14,6 +14,7 @@ import type { Env } from "./env";
 import { handleFeedbackRequest } from "./feedback";
 import { negotiatePage } from "./negotiate";
 import { handleNowPlayingRequest } from "./now-playing";
+import { handleWhereRequest } from "./where";
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
@@ -25,6 +26,10 @@ export default {
 
 		if (url.pathname === "/api/now-playing") {
 			return handleNowPlayingRequest(request, env);
+		}
+
+		if (url.pathname === "/api/where") {
+			return handleWhereRequest(request, env);
 		}
 
 		const negotiated = await negotiatePage(request, url, env.ASSETS);

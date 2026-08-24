@@ -2,8 +2,9 @@
 
 The site is a single Cloudflare Worker (`agucova-dev`) that serves the
 static Astro build from `dist/` and handles dynamic endpoints — the
-anonymous feedback relay at `POST /api/feedback` and the Spotify liveness
-endpoint at `GET /api/now-playing` ([`src/worker/`](src/worker/)).
+anonymous feedback relay at `POST /api/feedback`, the Spotify liveness
+endpoint at `GET /api/now-playing` and the where-am-I endpoint at
+`GET /api/where` ([`src/worker/`](src/worker/)).
 Configuration lives in [`wrangler.jsonc`](wrangler.jsonc).
 
 The feedback endpoint receives age-encrypted (armored) messages from
@@ -98,8 +99,9 @@ agents).
 Negotiation reads exactly one request header, `Accept`, and records nothing.
 Note that "nothing is persisted" is a per-endpoint invariant now rather than
 a Worker-wide one: `/api/now-playing` writes its Spotify cache to the
-`NOW_PLAYING` KV namespace (no visitor data), while `/api/feedback` and the
-negotiation path persist nothing at all.
+`NOW_PLAYING` KV namespace and `/api/where` its disclosure flag and DNS
+answer cache to `WHERE` (neither holds visitor data), while `/api/feedback`
+and the negotiation path persist nothing at all.
 
 ## Wrangler auth (IMPORTANT)
 
@@ -132,6 +134,13 @@ Already completed on the account — do not redo:
   `9cc79d836a0d48dd945e49e8f805acd6`, already wired into `wrangler.jsonc`.
   It caches the `/api/now-playing` response and Spotify access token, and
   holds no visitor data (see [docs/spotify-setup.md](docs/spotify-setup.md)).
+- **`WHERE` KV namespace created**: id
+  `5b823210670b45859e1295ca5c221faf`, already wired into `wrangler.jsonc`.
+  It holds the location disclosure flag and the cached DNS answer behind
+  `/api/where`, and no visitor data (see
+  [docs/where-setup.md](docs/where-setup.md)). Deliberately a different
+  namespace from `NOW_PLAYING`: the location switch is opt-in and the Spotify
+  ghost switch is opt-out, and neither may be able to reach the other's key.
 
 ## Remaining deploy steps
 
@@ -178,6 +187,26 @@ To go quiet later without touching the secrets, use ghost mode
 call at all and keeps serving the last track it saw, unchanged and with its
 real timestamp, which from outside is indistinguishable from having stopped
 listening. Details in [docs/spotify-setup.md](docs/spotify-setup.md).
+
+### 3b. Publishing a location (optional, off by default)
+
+`GET /api/where` and `/where` need no secrets at all: the Worker resolves the
+LOC and TXT records on `agucova.dev` over DNS-over-HTTPS and renders what
+comes back. Nothing is published until the CLI is run, and it fails closed on
+every doubt.
+
+```fish
+bun run scripts/where.ts cities        # the ids `set` accepts
+bun run scripts/where.ts set berkeley  # publish, for 14 days
+bun run scripts/where.ts status        # flag, records, and what the site shows
+bun run scripts/where.ts clear         # stop publishing
+```
+
+The CLI needs `Zone > DNS > Edit` on the `agucova.dev` zone in addition to
+the Workers KV permission `scripts/ghost.ts` already uses; the token above
+has both. Full design notes, including why DNS is the source of truth rather
+than a projection of one, are in
+[docs/where-setup.md](docs/where-setup.md).
 
 ### 4. Smoke test on workers.dev
 
@@ -244,6 +273,16 @@ curl -i http://localhost:8787/api/now-playing
 # HTTP/1.1 200 OK
 # cache-control: public, max-age=30
 # {"playing":false}
+```
+
+`/api/where` needs a record to read. Point it at a throwaway name rather
+than the apex:
+
+```fish
+bun run scripts/where.ts set berkeley --name loc-test --days 3 --local
+echo 'WHERE_NAME=loc-test.agucova.dev' >> .dev.vars
+curl -s http://localhost:8787/api/where
+bun run scripts/where.ts clear --name loc-test --local
 ```
 
 Markdown negotiation can be exercised the same way:

@@ -1,5 +1,6 @@
 // Cloudflare Worker serving the whole site: the static Astro build (dist/)
-// plus dynamic endpoints (POST /api/feedback, GET /api/now-playing).
+// plus dynamic endpoints (POST /api/feedback, GET /api/now-playing,
+// GET /api/where).
 //
 // The agucova.dev custom domain is attached to this Worker in the Cloudflare
 // dashboard rather than declared here, and pushes to main deploy through
@@ -31,7 +32,7 @@
 		// invocations. The list is generated from the page registry in
 		// src/lib/agents/pages.ts and asserted by tests/agents-pages.test.ts,
 		// which prints the expected list when it drifts.
-		"run_worker_first": ["/", "/now", "/uses", "/pgp", "/keys", "/feedback", "/api/*"]
+		"run_worker_first": ["/", "/now", "/where", "/uses", "/pgp", "/keys", "/feedback", "/api/*"]
 	},
 	// Email Sending binding used by /api/feedback. The from-domain
 	// (agucova.dev) must be onboarded via `wrangler email sending enable
@@ -51,6 +52,15 @@
 		{
 			"binding": "NOW_PLAYING",
 			"id": "9cc79d836a0d48dd945e49e8f805acd6"
+		},
+		// Opt-in gate and DNS answer cache behind GET /api/where (see
+		// docs/where-setup.md). Separate from NOW_PLAYING on purpose: the
+		// location switch and the Spotify ghost switch are different
+		// decisions with opposite defaults, and neither may be able to reach
+		// the other's key. Holds no visitor data.
+		{
+			"binding": "WHERE",
+			"id": "5b823210670b45859e1295ca5c221faf"
 		}
 	],
 	// Observability stays disabled on purpose: the feedback endpoint must

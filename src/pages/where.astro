@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Where from '../components/Where.svelte';
+import { CITIES } from '$lib/where/cities';
+import { WHERE_NAME } from '$lib/where';
+
+const title = "Where I am";
+const description = "The city I am in, published as a DNS LOC record you can check with dig.";
+
+// PLACEHOLDER PAGE. Every sentence below is a placeholder for Agus to
+// rewrite; only the commands, the record format and the city list are
+// load-bearing. What must survive any rewrite is the noise policy, which has
+// to stay stated on the page permanently rather than appearing only during
+// the trips it covers.
+const cityNames = CITIES.map((city) => city.name).join(", ");
+---
+
+<Layout title={title} description={description}>
+    <h1>{title}</h1>
+
+    <!-- PLACEHOLDER copy -->
+    <p>
+        I travel a lot, so this page says which city I am in. It is city level
+        and nothing finer.
+    </p>
+
+    <Where client:load />
+
+    <h2>Check it yourself</h2>
+
+    <!-- PLACEHOLDER copy -->
+    <p>
+        The city above is not stored on this site. It is read back out of DNS
+        on every refresh, so the page and the record cannot say different
+        things. Two records carry it, both on <code>{WHERE_NAME}</code>:
+    </p>
+
+    <pre><code>dig +short LOC {WHERE_NAME}
+dig +short TXT {WHERE_NAME}</code></pre>
+
+    <!-- PLACEHOLDER copy -->
+    <p>
+        The LOC record is the place. Its last three fields are
+        <a href="https://www.rfc-editor.org/rfc/rfc1876" rel="noopener noreferrer">RFC 1876</a>
+        size, horizontal precision and vertical precision: the first two are
+        the diameter of the city, which says the coordinates are good to city
+        scale and no further, and the third is at its maximum, which says the
+        altitude field means nothing. The coordinates are rounded to whole
+        arcminutes, so the seconds are always zero.
+    </p>
+
+    <!-- PLACEHOLDER copy -->
+    <p>
+        The TXT record is the terms: the date I published the location, and
+        the last date I claim it for. After that date this page goes quiet on
+        its own, whether or not I remember to clear it.
+    </p>
+
+    <!-- PLACEHOLDER copy -->
+    <p>
+        The coordinates map to a city name through a list in the site's
+        repository, so the label above is something you can reproduce rather
+        than something you have to accept. The list is: {cityNames}.
+    </p>
+
+    <h2>When it is wrong</h2>
+
+    <!-- PLACEHOLDER copy. This section is the point of the feature and has to
+         stay on the page permanently, including when nothing is published. A
+         warning that only appears during private trips would announce them. -->
+    <p>
+        Standing policy: if I want a trip to be private, I may leave this
+        stale or set it to a city I am not in, for as long as I like, without
+        marking it. So treat it as a hint and not as evidence. There is no
+        flag anywhere in the records or the API that tells you which case you
+        are looking at, because such a flag would give away the trips it
+        exists to cover.
+    </p>
+</Layout>

@@ -11,3 +11,10 @@ TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 SPOTIFY_CLIENT_ID=fake-client-id
 SPOTIFY_CLIENT_SECRET=fake-client-secret
 SPOTIFY_REFRESH_TOKEN=fake-refresh-token
+
+# Development-only override of the DNS name GET /api/where resolves. Unset in
+# production, where it reads the apex. It selects a name to look up and cannot
+# supply an answer, so it can never fake a location. Point it at a throwaway
+# record written with `scripts/where.ts set <city> --name loc-test --local`
+# rather than at the real apex (see docs/where-setup.md).
+# WHERE_NAME=loc-test.agucova.dev

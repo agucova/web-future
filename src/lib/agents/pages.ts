@@ -62,6 +62,12 @@ export const PAGES: readonly PageEntry[] = [
 		source: { kind: "page", file: "/src/pages/now.md" },
 	},
 	{
+		path: "/where",
+		title: "Where I am",
+		description: "The city I am in, published as a DNS LOC record you can check with dig.",
+		source: { kind: "twin", file: "/src/content/twins/where.md" },
+	},
+	{
 		path: "/uses",
 		title: "What I use",
 		description: "👨‍💻 The things I use as part of my daily workflow.",

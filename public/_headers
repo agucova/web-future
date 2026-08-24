@@ -1,5 +1,11 @@
 /*
-  Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.fontawesome.com https://fonts.googleapis.com https://fonts.gstatic.com https://assets.calendly.com https://calendly.com https://embed.savvycal.com https://challenges.cloudflare.com https://*.basemaps.cartocdn.com https://*.carto.com; frame-src https://calendly.com https://savvycal.com https://challenges.cloudflare.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.carto.com https://*.openstreetmap.org; media-src 'self'
+  Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.fontawesome.com https://fonts.googleapis.com https://fonts.gstatic.com https://assets.calendly.com https://calendly.com https://embed.savvycal.com https://challenges.cloudflare.com https://*.basemaps.cartocdn.com https://*.carto.com https://cloudflare-dns.com https://dns.google; frame-src https://calendly.com https://savvycal.com https://challenges.cloudflare.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.carto.com https://*.openstreetmap.org; media-src 'self'
+
+# The two DNS-over-HTTPS resolvers in default-src above are what /where uses
+# to read its LOC record in the visitor's own browser. They have to be granted
+# globally rather than in a /where block: a per-path policy is enforced
+# alongside /* rather than instead of it, so a narrower block can only ever
+# subtract. Nothing else on the site connects to them.
 
 # The asset server types .md and .txt without a charset in production, so
 # browsers fall back to a legacy encoding and mangle every non-ASCII character.
