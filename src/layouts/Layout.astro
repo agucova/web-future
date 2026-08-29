@@ -6,8 +6,8 @@ export interface Props {
     description?: string;
     isHome?: boolean;
     /**
-     * Strips every third-party script (FontAwesome, SavvyCal, the analytics
-     * beacon) and the icon footer. Used by privacy-sensitive pages like
+     * Strips every third-party script (FontAwesome, the analytics beacon)
+     * and the icon footer. Used by privacy-sensitive pages like
      * /feedback, where no external code may share the DOM with user input.
      */
     minimal?: boolean;
@@ -127,32 +127,6 @@ const markdownHref = registryEntry?.source ? markdownPathFor(registryEntry.path)
             "url": "https://agucova.dev/"
         }
         </script>
-        
-        {
-            !minimal && (
-                <>
-                    <script is:inline>
-                        window.SavvyCal =
-                            window.SavvyCal ||
-                            function () {
-                                (SavvyCal.q = SavvyCal.q || []).push(arguments);
-                            };
-                    </script>
-                    <script
-                        is:inline
-                        async
-                        src="https://embed.savvycal.com/v1/embed.js"
-                    />
-                    <script is:inline>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            if (window.SavvyCal && typeof window.SavvyCal === 'function') {
-                                SavvyCal('init');
-                            }
-                        });
-                    </script>
-                </>
-            )
-        }
     </head>
     <body>
         <nav id="upper-nav">
@@ -185,13 +159,6 @@ const markdownHref = registryEntry?.source ? markdownPathFor(registryEntry.path)
                     title="CV"
                     href="https://www.linkedin.com/in/agucova/"
                     aria-label="View my CV on LinkedIn">/cv</a
-                >
-            </div>
-            <div>
-                <a
-                    href="https://savvycal.com/agucova/drop-in-hours"
-                    data-savvycal-embed
-                    aria-label="Schedule a meeting with me">/meet</a
                 >
             </div>
         </nav>

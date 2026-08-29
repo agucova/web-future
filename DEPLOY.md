@@ -25,7 +25,7 @@ rather than Pages Functions — Pages Functions don't support `send_email`.)
 - Email subjects carry only a coarse `YYYY-MM` date. (Transport headers
   still reveal arrival time; the form discloses this to senders.)
 - `/feedback` renders with the `minimal` layout: no third-party scripts
-  (FontAwesome, SavvyCal, analytics beacon) may share the DOM with the
+  (FontAwesome, analytics beacon) may share the DOM with the
   plaintext textarea, and no pageview of it lands in analytics. A stricter
   path-scoped CSP in `public/_headers` enforces this.
 
