@@ -1,5 +1,5 @@
 /*
-  Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.fontawesome.com https://fonts.googleapis.com https://fonts.gstatic.com https://assets.calendly.com https://calendly.com https://embed.savvycal.com https://challenges.cloudflare.com https://*.basemaps.cartocdn.com https://*.carto.com https://cloudflare-dns.com https://dns.google; frame-src https://calendly.com https://savvycal.com https://challenges.cloudflare.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.carto.com https://*.openstreetmap.org; media-src 'self'
+  Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.fontawesome.com https://fonts.googleapis.com https://fonts.gstatic.com https://challenges.cloudflare.com https://*.basemaps.cartocdn.com https://*.carto.com https://cloudflare-dns.com https://dns.google; frame-src https://challenges.cloudflare.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.carto.com https://*.openstreetmap.org; media-src 'self'
 
 # The two DNS-over-HTTPS resolvers in default-src above are what /where uses
 # to read its LOC record in the visitor's own browser. They have to be granted
